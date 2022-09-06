@@ -79,7 +79,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Dashboard', icon: 'el-icon-menu', affix: true }
       }
     ],
     roles: ['admin', 'teacher', 'student']
@@ -130,6 +130,78 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'teacher',
+        component: () => import('@/views/admin/teacher'),
+        name: 'Teacher',
+        meta: { title: 'ครูผู้สอน', icon: 'el-icon-s-custom', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'subject',
+        component: () => import('@/views/admin/subject'),
+        name: 'Subject',
+        meta: { title: 'รายวิชา', icon: 'el-icon-collection', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'sec',
+        component: () => import('@/views/admin/sec'),
+        name: 'Sec',
+        meta: { title: 'ชั้นเรียน', icon: 'el-icon-house.', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/teacher',
+    component: Layout,
+    children: [
+      {
+        path: 'exam',
+        component: () => import('@/views/teacher/exam'),
+        name: 'Exam',
+        meta: { title: 'การทดสอบ', icon: 'el-icon-edit-outline', roles: ['teacher'] }
+      }
+    ]
+  },
+  {
+    path: '/teacher',
+    component: Layout,
+    children: [
+      {
+        path: 'score',
+        component: () => import('@/views/teacher/score'),
+        name: 'Score',
+        meta: { title: 'ผลการสอบ', icon: 'el-icon-s-claim', roles: ['teacher'] }
+      }
+    ]
+  },
+  {
+    path: '/student',
+    component: Layout,
+    children: [
+      {
+        path: 'exam',
+        component: () => import('@/views/student/exam'),
+        name: 'Exam',
+        meta: { title: 'การทดสอบ', icon: 'el-icon-edit-outline', roles: ['student'] }
+      }
+    ]
+  },
   // {
   //   path: '/permission',
   //   component: Layout,
@@ -385,7 +457,7 @@ export const asyncRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/', hidden: true }
 ]
 
 const createRouter = () => new Router({

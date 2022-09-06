@@ -521,7 +521,7 @@ const asyncRoutes = [
     ]
   },
 
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/', hidden: true }
 ]
 
 module.exports = {
