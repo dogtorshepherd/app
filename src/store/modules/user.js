@@ -1,4 +1,3 @@
-import { logout } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import axios from 'axios'
@@ -8,7 +7,7 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: ''
+  roles: []
 }
 
 const mutations = {
@@ -58,7 +57,7 @@ const actions = {
         headers: { Authorization: `Bearer ${state.token}` }
       }
       axios.get(
-        'http://localhost:8000/auth/users/me',
+        'http://localhost:8000/auth/users/me/',
         config
       ).then(response => {
         const { data } = response
@@ -71,11 +70,14 @@ const actions = {
         if (!role) {
           reject('getInfo: roles must be a non-null array!')
         }
+        const role_array = []
+        role_array.push(role)
 
-        commit('SET_ROLES', role)
+        commit('SET_ROLES', role_array)
         commit('SET_NAME', firstname + ' ' + lastname)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', bio)
+        data.roles = role_array
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -86,20 +88,20 @@ const actions = {
   // user logout
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', '')
-        removeToken()
-        resetRouter()
+      // logout(state.token).then(() => {
+      commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
+      removeToken()
+      resetRouter()
 
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true })
+      // reset visited views and cached views
+      // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
+      dispatch('tagsView/delAllViews', null, { root: true })
 
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      resolve()
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 
@@ -107,7 +109,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', '')
+      commit('SET_ROLES', [])
       removeToken()
       resolve()
     })
