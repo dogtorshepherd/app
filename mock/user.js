@@ -6,6 +6,9 @@ const tokens = {
   teacher: {
     token: 'teacher-token'
   },
+  teacher2: {
+    token: 'teacher-token2'
+  },
   student: {
     token: 'student-token'
   }
@@ -16,19 +19,29 @@ const users = {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://media.giphy.com/media/HifsMXFLaRsmQlx8jo/giphy.gif',
-    name: 'Super Admin'
+    name: 'Super Admin',
+    password: 'admin'
   },
   'teacher-token': {
     roles: ['teacher'],
     introduction: 'I am an teacher',
     avatar: 'https://media.giphy.com/media/XpLdhYseuf3mtwJ5Zy/giphy.gif',
-    name: 'Normal Teacher'
+    name: 'Normal Teacher',
+    password: 'teacher'
+  },
+  'teacher-token2': {
+    roles: ['teacher'],
+    introduction: 'I am an teacher2',
+    avatar: 'https://c.tenor.com/ugw8PESrI7sAAAAM/shiba-dog-jump.gif',
+    name: 'Normal Teacher2',
+    password: 'teacher2'
   },
   'student-token': {
     roles: ['student'],
     introduction: 'I am an student',
     avatar: 'https://media.giphy.com/media/H9M7lvORlmeFmvGoqY/giphy.gif',
-    name: 'Normal Student'
+    name: 'Normal Student',
+    password: 'student'
   }
 }
 
