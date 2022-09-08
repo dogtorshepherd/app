@@ -63,7 +63,7 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      if (confirm('Do you really want to logout?')) {
+      if (confirm('ออกจากระบบ?')) {
         await this.$store.dispatch('user/logout')
         this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       }

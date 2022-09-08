@@ -159,12 +159,13 @@ export default {
               console.error('There was an error!', error);
             }
             console.log('Success');
+            this.dialogFormVisible = false
+            // _vm.$forceUpdate();
           })
           .catch(error => {
             this.errorMessage = error;
             console.error('There was an error!', error);
           });
-        this.dialogFormVisible = false
       }
     },
     getCustomerData() {
@@ -186,6 +187,16 @@ export default {
           console.log(error);
         });
     },
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    async handleDelete(index, row) {
+      if (confirm('ลบครูผู้สอน?')) {
+        console.log(row.user_id);
+        // await this.$store.dispatch('user/logout')
+        // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      }
+    }
   },
 };
 </script>
