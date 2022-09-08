@@ -31,7 +31,13 @@
                 <el-input v-model="addTeacherForm.number" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="อีเมล">
-                <el-input v-model="addTeacherForm.usemailer_id" autocomplete="off"></el-input>
+                <el-input v-model="addTeacherForm.email" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Username">
+                <el-input v-model="addTeacherForm.username" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Password">
+                <el-input v-model="addTeacherForm.password" autocomplete="off"></el-input>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -79,6 +85,8 @@ export default {
         lastname: '',
         number: '',
         email: '',
+        username: '',
+        password: '',
       },
       // Note 'isActive' is left out and will not appear in the rendered table
       fields: [
@@ -125,14 +133,39 @@ export default {
   },
   methods: {
     submitAddTeacherForm() {
-      this.dialogFormVisible = false
-      console.log(this.addTeacherForm)
-    },
-    showCreateModal() {
-      this.$refs["create-customer-modal"].show();
-    },
-    closeCreateModal() {
-      this.$refs["create-customer-modal"].hide();
+      if (this.addTeacherForm.user_id === '' || this.addTeacherForm.firstname === '' || this.addTeacherForm.lastname === '' || this.addTeacherForm.username === '' || this.addTeacherForm.password === '') {
+        console.log("not valid")
+      } else {
+        const { user_id, firstname, lastname, number, email, username, password } = this.addTeacherForm
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: user_id,
+            firstname: firstname,
+            lastname: lastname,
+            number: number,
+            email: email,
+            role: 'teacher',
+            username: username,
+            password: password,
+          })
+        };
+        fetch('http://localhost:8000/user/', requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              console.error('There was an error!', error);
+            }
+            console.log('Success');
+          })
+          .catch(error => {
+            this.errorMessage = error;
+            console.error('There was an error!', error);
+          });
+        this.dialogFormVisible = false
+      }
     },
     getCustomerData() {
       axios
@@ -153,43 +186,6 @@ export default {
           console.log(error);
         });
     },
-    getRowData(id) {
-      this.$refs["edit-customer-modal"].show();
-      this.customerId = id;
-    },
-    closeEditModal() {
-      this.$refs["edit-customer-modal"].hide();
-    },
-    setFilterTotalIsActive() {
-      this.tableHeader = "Total Customers";
-      this.getCustomerData();
-    },
-    setFilterActiveIsActive() {
-      this.tableHeader = "Active Customers";
-      this.tableData = this.activeCustomersData;
-    },
-    showAlertCreate() {
-      this.showSuccessAlert = true;
-      this.alertMessage = "Customer was created successfully!";
-    },
-    showAlertUpdate() {
-      this.showSuccessAlert = true;
-      this.alertMessage = "Customer was updated successfully";
-    },
-    showDeleteModal(id) {
-      this.$refs["delete-customer-modal"].show();
-      this.customerId = id;
-    },
-    closeDeleteModal() {
-      this.$refs["delete-customer-modal"].hide();
-    },
-    showDeleteSuccessModal() {
-      this.showSuccessAlert = true;
-      this.alertMessage = "Customer was deleted successfully!";
-    },
-    handleClick() {
-      console.log('click')
-    }
   },
 };
 </script>
