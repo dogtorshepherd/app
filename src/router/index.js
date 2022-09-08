@@ -138,7 +138,19 @@ export const asyncRoutes = [
         path: 'teacher',
         component: () => import('@/views/admin/teacher'),
         name: 'Teacher',
-        meta: { title: 'ครูผู้สอน', icon: 'el-icon-s-custom', roles: ['admin'] }
+        meta: { title: 'อาจารย์', icon: 'el-icon-s-custom', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'student',
+        component: () => import('@/views/admin/student'),
+        name: 'Student',
+        meta: { title: 'นักศึกษา', icon: 'el-icon-s-custom', roles: ['admin'] }
       }
     ]
   },
@@ -162,7 +174,7 @@ export const asyncRoutes = [
         path: 'sec',
         component: () => import('@/views/admin/sec'),
         name: 'Sec',
-        meta: { title: 'ชั้นเรียน', icon: 'el-icon-house.', roles: ['admin'] }
+        meta: { title: 'ชั้นเรียน', icon: 'el-icon-house', roles: ['admin'] }
       }
     ]
   },

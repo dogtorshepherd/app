@@ -1,14 +1,14 @@
 <template>
-  <data-table :key="componentKey" :v-if="renderComponent"></data-table>
+  <TeacherDataTable/>
 </template>
 
 <script>
-import DataTable from "@/components/DataTable.vue";
+import TeacherDataTable from "@/components/TeacherDataTable.vue";
 
 export default {
-  name: "Home",
+  name: "Teacher",
     components: {
-      DataTable,
+      TeacherDataTable,
     },
 };
 </script>
