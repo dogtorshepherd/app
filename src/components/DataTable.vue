@@ -45,6 +45,36 @@
               <el-button type="primary" @click="submitAddTeacherForm">ตกลง</el-button>
             </span>
           </el-dialog>
+
+          <el-dialog title="แก้ไขครูผู้สอน" :visible.sync="editFormVisible" center>
+            <el-form :v-model="editTeacherForm">
+              <el-form-item label="รหัสอาจารย์">
+                <el-input v-model="editTeacherForm.user_id" autocomplete="off" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="ชื่อ">
+                <el-input v-model="editTeacherForm.firstname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="นามสกุล">
+                <el-input v-model="editTeacherForm.lastname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="เบอร์โทรศัพท์">
+                <el-input v-model="editTeacherForm.number" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="อีเมล">
+                <el-input v-model="editTeacherForm.email" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Username">
+                <el-input v-model="editTeacherForm.username" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Password">
+                <el-input v-model="editTeacherForm.password" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="editFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitEditTeacherForm">ตกลง</el-button>
+            </span>
+          </el-dialog>
         </template>
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
@@ -78,8 +108,21 @@ export default {
   },
   data() {
     return {
+      key: 1,
+      renderComponent: true,
+      componentKey: 0,
       dialogFormVisible: false,
+      editFormVisible: false,
       addTeacherForm: {
+        user_id: '',
+        firstname: '',
+        lastname: '',
+        number: '',
+        email: '',
+        username: '',
+        password: '',
+      },
+      editTeacherForm: {
         user_id: '',
         firstname: '',
         lastname: '',
@@ -160,13 +203,45 @@ export default {
             }
             console.log('Success');
             this.dialogFormVisible = false
-            // _vm.$forceUpdate();
+            this.methodThatForcesUpdate()
           })
           .catch(error => {
             this.errorMessage = error;
             console.error('There was an error!', error);
           });
       }
+    },
+    submitEditTeacherForm() {
+      const { user_id, firstname, lastname, number, email, username, password } = this.editTeacherForm
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user_id,
+          firstname: firstname,
+          lastname: lastname,
+          number: number,
+          email: email,
+          role: 'teacher',
+          username: username,
+          password: password,
+        })
+      };
+      fetch('http://localhost:8000/user/', requestOptions)
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            const error = (data && data.message) || response.status;
+            console.error('There was an error!', error);
+          }
+          console.log('Success');
+          this.editFormVisible = false
+          this.methodThatForcesUpdate()
+        })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error('There was an error!', error);
+        });
     },
     getCustomerData() {
       axios
@@ -188,14 +263,64 @@ export default {
         });
     },
     handleEdit(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
+      axios
+        .get("http://localhost:8000/user/?user_id=" + row.user_id)
+        .then((response) => {
+          const res = response.data[0]
+          const { user_id, firstname, lastname, number, email, role, username, password } = res
+          this.editTeacherForm.user_id = user_id
+          this.editTeacherForm.firstname = firstname
+          this.editTeacherForm.lastname = lastname
+          this.editTeacherForm.number = number
+          this.editTeacherForm.email = email
+          this.editTeacherForm.username = username
+          this.editTeacherForm.password = ''
+          // this.tableHeader = "Total Customer";
+        //   const teacher = response.data.filter(
+        //     (user) => user.role === 'teacher'
+        //     );
+        //   this.tableData = teacher;
+        //   this.numberOfCustomers = teacher.length;
+        //   this.activeCustomersData = teacher.filter(
+        //     (user) => user.disabled !== 1
+        //   );
+        //   this.activeCustomers = this.activeCustomersData.length;
+        })
+        // .catch((error) => {
+        //   console.log(error);
+        // });
+      this.editFormVisible = true
     },
     async handleDelete(index, row) {
       if (confirm('ลบครูผู้สอน?')) {
-        console.log(row.user_id);
+        // console.log(row.user_id);
+        axios
+          .delete("http://localhost:8000/user/?user_id=" + row.user_id)
+          .then((response) => {
+            console.log(response.data);
+            this.methodThatForcesUpdate()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         // await this.$store.dispatch('user/logout')
         // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       }
+    },
+    methodThatForcesUpdate() {
+      this.$router.go()
+      // this.key++
+      // console.log(this.key)
+      // this.componentKey += 1;
+      // this.$forceUpdate();
+      // this.$router.push(`${this.$route.fullPath}`)
+      // // Removing my-component from the DOM
+      // this.renderComponent = false;
+      // this.$nextTick(() => {
+      //   // Adding the component back in
+      //   this.renderComponent = true;
+      // });
     }
   },
 };

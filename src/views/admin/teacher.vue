@@ -1,5 +1,5 @@
 <template>
-  <data-table></data-table>
+  <data-table :key="componentKey" :v-if="renderComponent"></data-table>
 </template>
 
 <script>
