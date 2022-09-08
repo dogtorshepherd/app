@@ -1,128 +1,58 @@
 <template>
   <div>
-    <b-row>
-      <b-alert v-model="showSuccessAlert" variant="success" dismissible>
-        {{ alertMessage }}
-      </b-alert>
-    </b-row>
-    <b-row>
-      <customer-overview
-        :totalCustomers="numberOfCustomers"
-        :activeCustomers="activeCustomers"
-        @totalCustomersIsActive="setFilterTotalIsActive"
-        @activeCustomerIsActive="setFilterActiveIsActive"
-      ></customer-overview>
-    </b-row>
-    <b-row class="mt-3">
-      <b-card>
-        <b-row align-h="between">
-          <b-col cols="6">
-            <h3>{{ tableHeader }}</h3>
-          </b-col>
-          <b-col cols="2">
-            <b-row>
-              <b-col>
-                <b-button
-                  variant="primary"
-                  id="show-btn"
-                  @click="showCreateModal"
-                >
-                  <b-icon-plus class="text-white"></b-icon-plus>
-                  <span class="h6 text-white">เพิ่มอาจารย์</span>
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-row>
-        <b-row class="mt-3">
-          <b-table
-            striped
-            hover
-            :items="items"
-            :fields="fields"
-            class="text-center"
+    <!-- <customer-overview
+      :totalCustomers="numberOfCustomers"
+      :activeCustomers="activeCustomers"
+      @totalCustomersIsActive="setFilterTotalIsActive"
+      @activeCustomerIsActive="setFilterActiveIsActive"
+    ></customer-overview> -->
+    <el-table :data="tableData" style="width: 90%;margin: 50px">
+      <el-table-column fixed prop="user_id" label="รหัสอาจารย์" />
+      <el-table-column prop="firstname" label="ชื่อ" />
+      <el-table-column prop="lastname" label="นามสกุล" />
+      <el-table-column prop="number" label="เบอร์โทรศัพท์" />
+      <el-table-column prop="email" label="อีเมล" />
+      <el-table-column align="right">
+        <template #header>
+          <el-button @click="dialogFormVisible = true">เพิ่มครูผู้สอน</el-button>
+
+          <el-dialog title="เพิ่มครูผู้สอน" :visible.sync="dialogFormVisible" center>
+            <el-form :model="addTeacherForm">
+              <el-form-item label="รหัสอาจารย์">
+                <el-input v-model="addTeacherForm.user_id" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="ชื่อ">
+                <el-input v-model="addTeacherForm.firstname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="นามสกุล">
+                <el-input v-model="addTeacherForm.lastname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="เบอร์โทรศัพท์">
+                <el-input v-model="addTeacherForm.number" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="อีเมล">
+                <el-input v-model="addTeacherForm.usemailer_id" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitAddTeacherForm">ตกลง</el-button>
+            </span>
+          </el-dialog>
+        </template>
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+            >Edit</el-button
           >
-            <template #cell(contact_name)="data">
-              {{
-                `${data.item.contact_firstname} ${data.item.contact_lastname}`
-              }}
-            </template>
-            <template #cell(customer_status)="data">
-              <b-icon-bookmark-check-fill
-                variant="success"
-                v-if="data.item.customer_status === 'active'"
-              ></b-icon-bookmark-check-fill>
-              <b-icon-bookmark-x-fill
-                variant="danger"
-                v-else
-              ></b-icon-bookmark-x-fill>
-            </template>
-            <template #cell(จัดการ)="data">
-              <b-row>
-                <b-col cols="7">
-                  <b-icon-pencil-square
-                    class="action-item"
-                    variant="primary"
-                    @click="getRowData(data.item.id)"
-                  ></b-icon-pencil-square>
-                </b-col>
-                <b-col cols="1">
-                  <b-icon-trash-fill
-                    class="action-item"
-                    variant="danger"
-                    @click="showDeleteModal(data.item.id)"
-                  ></b-icon-trash-fill>
-                </b-col>
-              </b-row>
-            </template>
-          </b-table>
-        </b-row>
-      </b-card>
-    </b-row>
-
-    <!-- Modal for adding new customers -->
-    <b-modal
-      ref="create-customer-modal"
-      size="xl"
-      hide-footer
-      title="New Customer"
-    >
-      <create-customer-form
-        @closeCreateModal="closeCreateModal"
-        @reloadDataTable="getCustomerData"
-        @showSuccessAlert="showAlertCreate"
-      ></create-customer-form>
-    </b-modal>
-
-    <!-- Modal for updating customers -->
-    <b-modal
-      ref="edit-customer-modal"
-      size="xl"
-      hide-footer
-      title="Edit Customer"
-    >
-      <edit-customer-form
-        @closeEditModal="closeEditModal"
-        @reloadDataTable="getCustomerData"
-        @showSuccessAlert="showAlertUpdate"
-        :customerId="customerId"
-      ></edit-customer-form>
-    </b-modal>
-
-    <!-- Delete Customer Modal -->
-    <b-modal
-      ref="delete-customer-modal"
-      size="md"
-      hide-footer
-      title="Confirm Deletion"
-    >
-      <delete-customer-modal
-        @closeDeleteModal="closeDeleteModal"
-        @reloadDataTable="getCustomerData"
-        @showDeleteAlert="showDeleteSuccessModal"
-        :customerId="customerId"
-      ></delete-customer-modal>
-    </b-modal>
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >Delete</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -142,8 +72,15 @@ export default {
   },
   data() {
     return {
+      dialogFormVisible: false,
+      addTeacherForm: {
+        user_id: '',
+        firstname: '',
+        lastname: '',
+        number: '',
+        email: '',
+      },
       // Note 'isActive' is left out and will not appear in the rendered table
-
       fields: [
         {
           key: "user_id",
@@ -172,7 +109,7 @@ export default {
         },
         "จัดการ",
       ],
-      items: [],
+      tableData: [],
       numberOfCustomers: 0,
       activeCustomers: 0,
       activeCustomersData: [],
@@ -187,6 +124,10 @@ export default {
     this.getCustomerData();
   },
   methods: {
+    submitAddTeacherForm() {
+      this.dialogFormVisible = false
+      console.log(this.addTeacherForm)
+    },
     showCreateModal() {
       this.$refs["create-customer-modal"].show();
     },
@@ -199,13 +140,12 @@ export default {
         .then((response) => {
           // this.tableHeader = "Total Customer";
           const teacher = response.data.filter(
-            (item) => item.role === 'teacher'
+            (user) => user.role === 'teacher'
             );
-          console.log(teacher)
-          this.items = teacher;
+          this.tableData = teacher;
           this.numberOfCustomers = teacher.length;
           this.activeCustomersData = teacher.filter(
-            (item) => item.disabled !== 1
+            (user) => user.disabled !== 1
           );
           this.activeCustomers = this.activeCustomersData.length;
         })
@@ -226,7 +166,7 @@ export default {
     },
     setFilterActiveIsActive() {
       this.tableHeader = "Active Customers";
-      this.items = this.activeCustomersData;
+      this.tableData = this.activeCustomersData;
     },
     showAlertCreate() {
       this.showSuccessAlert = true;
@@ -247,6 +187,9 @@ export default {
       this.showSuccessAlert = true;
       this.alertMessage = "Customer was deleted successfully!";
     },
+    handleClick() {
+      console.log('click')
+    }
   },
 };
 </script>
@@ -254,5 +197,34 @@ export default {
 <style scoped>
 .action-item:hover {
   cursor: pointer;
+}
+.el-alert {
+  margin: 20px 0 0;
+}
+.el-alert:first-child {
+  margin: 0;
+}
+.el-row {
+  margin-bottom: 20px;
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
 }
 </style>

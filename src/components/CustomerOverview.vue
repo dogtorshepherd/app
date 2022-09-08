@@ -1,38 +1,7 @@
 <template>
-  <div>
-    <b-row class="text-center">
-      <b-col>
-        <div
-          class="filter-card p-3"
-          :class="{
-            'bg-active-filter': totalIsActive,
-            'bg-light': !totalIsActive,
-          }"
-          @click="totalCustomersIsActiveFilter"
-        >
-          <h6>อาจารย์ทั้งหมด</h6>
-          <h4>
-            <strong>{{ totalCustomers }}</strong>
-          </h4>
-        </div>
-      </b-col>
-      <!-- <b-col>
-        <div
-          class="filter-card p-3"
-          :class="{
-            'bg-active-filter': activeIsActive,
-            'bg-light': !activeIsActive,
-          }"
-          @click="activeCustomersIsActiveFilter"
-        >
-          <h6 class="text-secondary">Active Customers</h6>
-          <h4>
-            <strong>{{ activeCustomers }}</strong>
-          </h4>
-        </div>
-      </b-col> -->
-    </b-row>
-  </div>
+  <el-alert :closable="false" >
+    ครูทั้งหมด {{ totalCustomers }} ท่าน
+  </el-alert>
 </template>
 
 <script>

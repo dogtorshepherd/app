@@ -20,8 +20,6 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
-
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -40,16 +38,13 @@ Vue.use(Element, {
   locale: enLang // 如果使用中文，无需设置，请删除
 })
 
-// Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
-
 // register global utility filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
 Vue.config.productionTip = false
+Vue.config.silent = true
 
 new Vue({
   el: '#app',

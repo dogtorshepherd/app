@@ -1,129 +1,60 @@
 <template>
-  <b-form>
-    <b-row>
-      <b-row>
-        <h4>Contact Details</h4>
-      </b-row>
-      <b-col cols="6">
-        <b-form-group id="first-name" label="First Name" label-for="first-name">
-          <b-form-input
-            id="first-name"
-            type="text"
-            placeholder="First Name"
-            v-model="customer.contact_firstname"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-      <b-col cols="6">
-        <b-form-group id="last-name" label="Last Name" label-for="last-name">
-          <b-form-input
-            id="last-name"
-            type="text"
-            placeholder="Last Name"
-            v-model="customer.contact_lastname"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="6">
-        <b-form-group id="email" label="E-Mail" label-for="email">
-          <b-form-input
-            id="email"
-            type="email"
-            placeholder="example@crm.com"
-            v-model="customer.contact_email"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <h4>Company Details</h4>
-    </b-row>
-    <b-row>
-      <b-col cols="4">
-        <b-form-group
-          id="company_name"
-          label="Company Name"
-          label-for="company_name"
-        >
-          <b-form-input
-            id="company_name"
-            type="text"
-            placeholder="XYZ Industries"
-            v-model="customer.company_name"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="4">
-        <b-form-group
-          id="acquired_on"
-          label="Acquired On"
-          label-for="acquired_on"
-        >
-          <b-form-input
-            id="acquired_on"
-            type="date"
-            v-model="customer.acquired_on"
-          ></b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-form-checkbox
-        id="customer_status"
-        v-model="customer.customer_status"
-        name="customer-status"
-        value="active"
-        unchecked-value="inactive"
-      >
-        Customer is active
-      </b-form-checkbox>
-    </b-row>
-    <b-row>
-      <b-col cols="3">
-        <b-button variant="primary" @click="addNewCustomer"
-          >Add Customer</b-button
-        >
-      </b-col>
-      <b-col>
-        <b-button variant="warning" @click="triggerClose">Close</b-button>
-      </b-col>
-    </b-row>
-  </b-form>
+  <v-card class="mx-auto" color="grey lighten-4" max-width="600">
+    <v-card-title>
+      <v-icon :color="checking ? 'red lighten-2' : 'indigo'" class="mr-5" size="64" @click="takePulse">
+        mdi-heart-pulse
+      </v-icon>
+      <v-layout column align-start>
+        <div class="caption grey--text text-uppercase">
+          Heart rate
+        </div>
+        <div>
+          <span class="display-2 font-weight-black" v-text="avg || '—'"></span>
+          <strong v-if="avg">BPM</strong>
+        </div>
+      </v-layout>
+      <v-spacer></v-spacer>
+      <v-btn icon class="align-self-start" size="28">
+        <v-icon>mdi-arrow-right-thick</v-icon>
+      </v-btn>
+    </v-card-title>
+
+    <v-sheet color="transparent">
+      <v-sparkline :smooth="16" :gradient="['#f72047', '#ffd200', '#1feaea']" :line-width="3" :key="String(avg)" :value="heartbeats" auto-draw
+        stroke-linecap="round"
+      ></v-sparkline>
+    </v-sheet>
+  </v-card>
 </template>
-
 <script>
-import axios from "axios";
-
-export default {
-  name: "CreateCustomerModal",
-  data() {
-    return {
-      customer: {},
-    };
-  },
-  methods: {
-    triggerClose() {
-      this.$emit("closeCreateModal");
+  const exhale = ms =>
+    new Promise(resolve => setTimeout(resolve, ms))
+  export default {
+    data: () => ({
+      checking: false,
+      heartbeats: []
+    }),
+    computed: {
+      avg () {
+        const sum = this.heartbeats.reduce((acc, cur) => acc + cur, 0)
+        const length = this.heartbeats.length
+        if (!sum && !length) return 0
+        return Math.ceil(sum / length)
+      }
     },
-    addNewCustomer() {
-      axios
-        .post("http://localhost:3000/customers/", this.customer)
-        .then((response) => {
-          console.log(response.data);
-          this.$emit("closeCreateModal");
-          this.$emit("reloadDataTable");
-          this.$emit("showSuccessAlert");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    created () {
+      this.takePulse(false)
     },
-  },
-};
+    methods: {
+      heartbeat () {
+        return Math.ceil(Math.random() * (120 - 80) + 80)
+      },
+      async takePulse (inhale = true) {
+        this.checking = true
+        inhale && await exhale(1000)
+        this.heartbeats = Array.from({ length: 20 }, this.heartbeat)
+        this.checking = false
+      }
+    }
+  }
 </script>
-
-<style scoped></style>
