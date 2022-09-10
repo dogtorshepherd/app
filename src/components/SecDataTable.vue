@@ -1,0 +1,259 @@
+<template>
+  <div>
+    <el-table :data="secData" style="width: 90%;margin: 50px">
+      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" align='center' />
+      <el-table-column prop="subject_id" label="ชื่อวิชา" align='center' />
+      <el-table-column prop="teacher_id" label="อาจารย์ผู้สอน" align='center' />
+      <el-table-column label="รายชื่อนักเรียน" align='center'>
+        <el-button size="small" @click="handleStudentDetail(scope.$index, scope.row)"
+            >รายละเอียด</el-button
+          >
+      </el-table-column>
+      <el-table-column align='center'>
+        <template #header>
+          <el-button @click="addSecFormVisible = true">เพิ่มห้องเรียน</el-button>
+
+          <el-dialog title="เพิ่มห้องเรียน" :visible.sync="addSecFormVisible" center>
+            <el-form :model="addSecFormData">
+              <el-form-item label="ชื่อวิชา">
+                <el-select v-model="addSecFormData.subject_id" placeholder="เลือกวิชา">
+                  <el-option v-for="subject in subjectData" :label="subject.title" :value="subject.subject_id" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="อาจารย์ผู้สอน">
+                <el-select v-model="addSecFormData.teacher_id" placeholder="เลือกอาจารย์">
+                  <el-option v-for="teacher in teacherData" :label="teacher.firstname + ' ' + teacher.lastname" :value="teacher.user_id"/>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="addSecFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitAddSecForm">ตกลง</el-button>
+            </span>
+          </el-dialog>
+
+          <el-dialog title="แก้ไขข้อมูลห้องเรียน" :visible.sync="editSecFormVisible" center>
+            <el-form :v-model="editSecFormData">
+              <el-form-item label="ชื่อวิชา">
+                <el-select v-model="editSecFormData.subject_id" placeholder="เลือกวิชา">
+                  <el-option v-for="subject in subjectData" :label="subject.title" :value="subject.subject_id" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="อาจารย์ผู้สอน">
+                <el-select v-model="editSecFormData.teacher_id" placeholder="เลือกอาจารย์">
+                  <el-option v-for="teacher in teacherData" :label="teacher.firstname + ' ' + teacher.lastname" :value="teacher.user_id"/>
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="editSecFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitEditSecForm">ตกลง</el-button>
+            </span>
+          </el-dialog>
+        </template>
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+            >แก้ไข</el-button
+          >
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >ลบ</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      addSecFormVisible: false,
+      editSecFormVisible: false,
+      addSecFormData: {
+        subject_id: '',
+        teacher_id: '',
+      },
+      editSecFormData: {
+        sec_id: '',
+        subject_id: '',
+        teacher_id: '',
+      },
+      secData: [],
+      subjectData: [],
+      teacherData: [],
+      studentData: [],
+    };
+  },
+  mounted() {
+    this.getSecData();
+    this.getSubjectData();
+    this.getUserData();
+  },
+  methods: {
+    submitAddSecForm() {
+      if (this.addSecFormData.subject_id === '' || this.addSecFormData.teacher_id === '') {
+        console.log("not valid")
+      } else {
+        const { subject_id, teacher_id } = this.addSecFormData
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subject_id: subject_id,
+            teacher_id: teacher_id,
+          })
+        };
+        fetch('http://localhost:8000/sec/', requestOptions)
+          .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              console.error('There was an error!', error);
+            }
+            console.log('Success');
+            this.addSecFormVisible = false
+            this.forcesRerender()
+          })
+          .catch(error => {
+            this.errorMessage = error;
+            console.error('There was an error!', error);
+          });
+      }
+    },
+    submitEditSecForm() {
+      const { sec_id, subject_id, teacher_id } = this.editSecFormData
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sec_id: sec_id,
+          subject_id: subject_id,
+          teacher_id: teacher_id,
+        })
+      };
+      fetch('http://localhost:8000/sec/', requestOptions)
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            const error = (data && data.message) || response.status;
+            console.error('There was an error!', error);
+          }
+          console.log('Success');
+          this.editSecFormVisible = false
+          this.forcesRerender()
+        })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error('There was an error!', error);
+        });
+    },
+    getSecData() {
+      axios
+        .get("http://localhost:8000/sec/")
+        .then((response) => {
+          this.secData = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getSubjectData() {
+      axios
+        .get("http://localhost:8000/subject/")
+        .then((response) => {
+          this.subjectData = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getUserData() {
+      axios
+        .get("http://localhost:8000/user/")
+        .then((response) => {
+          const users = response.data
+          const teacher = users.filter(
+            (user) => user.role === 'teacher'
+            );
+          this.teacherData = teacher;
+          const student = users.filter(
+            (user) => user.role === 'student'
+            );
+          this.studentData = student;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    handleEdit(index, row) {
+      axios
+        .get("http://localhost:8000/sec/?sec_id=" + row.sec_id)
+        .then((response) => {
+          const res = response.data[0]
+          const { sec_id, subject_id, teacher_id } = res
+          this.editSecFormData.sec_id = sec_id
+          this.editSecFormData.subject_id = subject_id
+          this.editSecFormData.teacher_id = teacher_id
+        })
+      this.editSecFormVisible = true
+    },
+    async handleDelete(index, row) {
+      if (confirm('ยืนยันการลบห้องเรียนหรือไม่?')) {
+        axios
+          .delete("http://localhost:8000/sec/?sec_id=" + row.sec_id)
+          .then((response) => {
+            console.log(response.data);
+            this.forcesRerender()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    forcesRerender() {
+      this.$router.go()
+    }
+  },
+};
+</script>
+
+<style scoped>
+.action-item:hover {
+  cursor: pointer;
+}
+.el-alert {
+  margin: 20px 0 0;
+}
+.el-alert:first-child {
+  margin: 0;
+}
+.el-row {
+  margin-bottom: 20px;
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+</style>

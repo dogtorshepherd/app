@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-table :data="subjectData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="subject_id" label="รหัสรายวิชา" />
-      <el-table-column prop="title" label="ชื่อวิชา" />
-      <el-table-column prop="des" label="คำอธิบายรายวิชา" />
-      <el-table-column align="right">
+      <el-table-column fixed prop="subject_id" label="รหัสรายวิชา" align='center' />
+      <el-table-column prop="title" label="ชื่อวิชา" align='center' />
+      <el-table-column prop="des" label="คำอธิบายรายวิชา" align='center' />
+      <el-table-column align='center'>
         <template #header>
           <el-button @click="addSubjectFormVisible = true">เพิ่มรายวิชา</el-button>
 

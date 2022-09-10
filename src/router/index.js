@@ -174,7 +174,7 @@ export const asyncRoutes = [
         path: 'sec',
         component: () => import('@/views/admin/sec'),
         name: 'Sec',
-        meta: { title: 'ชั้นเรียน', icon: 'el-icon-house', roles: ['admin'] }
+        meta: { title: 'ห้องเรียน', icon: 'el-icon-house', roles: ['admin'] }
       }
     ]
   },

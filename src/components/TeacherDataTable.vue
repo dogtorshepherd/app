@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-table :data="teacherData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="user_id" label="รหัสอาจารย์" />
-      <el-table-column prop="firstname" label="ชื่อ" />
-      <el-table-column prop="lastname" label="นามสกุล" />
-      <el-table-column prop="number" label="เบอร์โทรศัพท์" />
-      <el-table-column prop="email" label="อีเมล" />
-      <el-table-column align="right">
+      <el-table-column fixed prop="user_id" label="รหัสอาจารย์" align='center' />
+      <el-table-column prop="firstname" label="ชื่อ" align='center' />
+      <el-table-column prop="lastname" label="นามสกุล" align='center' />
+      <el-table-column prop="number" label="เบอร์โทรศัพท์" align='center' />
+      <el-table-column prop="email" label="อีเมล" align='center' />
+      <el-table-column align='center'>
         <template #header>
           <el-button @click="addTeacherFormVisible = true">เพิ่มอาจารย์</el-button>
 
