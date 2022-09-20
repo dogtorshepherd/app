@@ -2,12 +2,14 @@
   <div>
     <el-table :data="secData" style="width: 90%;margin: 50px">
       <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" align='center' />
-      <el-table-column prop="subject_id" label="ชื่อวิชา" align='center' />
-      <el-table-column prop="teacher_id" label="อาจารย์ผู้สอน" align='center' />
+      <el-table-column prop="subject" label="ชื่อวิชา" align='center' />
+      <el-table-column prop="teacher" label="ชื่ออาจารย์" align='center' />
       <el-table-column label="รายชื่อนักเรียน" align='center'>
-        <el-button size="small" @click="handleStudentDetail(scope.$index, scope.row)"
+        <template #default="scope">
+          <el-button size="small" @click="handleStudentDetail(scope.$index, scope.row)"
             >รายละเอียด</el-button
           >
+        </template>
       </el-table-column>
       <el-table-column align='center'>
         <template #header>
@@ -50,6 +52,13 @@
               <el-button type="primary" @click="submitEditSecForm">ตกลง</el-button>
             </span>
           </el-dialog>
+
+          <el-dialog title="รายชื่อนักเรียน" :visible.sync="studentTableVisible" center>
+            <h1>555</h1>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="studentTableVisible = false">ปิด</el-button>
+            </span>
+          </el-dialog>
         </template>
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
@@ -75,6 +84,7 @@ export default {
     return {
       addSecFormVisible: false,
       editSecFormVisible: false,
+      studentTableVisible: false,
       addSecFormData: {
         subject_id: '',
         teacher_id: '',
@@ -155,7 +165,7 @@ export default {
     },
     getSecData() {
       axios
-        .get("http://localhost:8000/sec/")
+        .get("http://localhost:8080/api/sec")
         .then((response) => {
           this.secData = response.data;
         })
@@ -190,6 +200,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    handleStudentDetail(index, row) {
+      console.log(index, row)
+      this.studentTableVisible = true
     },
     handleEdit(index, row) {
       axios
