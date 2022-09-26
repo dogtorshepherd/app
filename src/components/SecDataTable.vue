@@ -54,9 +54,23 @@
           </el-dialog>
 
           <el-dialog title="รายชื่อนักเรียน" :visible.sync="studentTableVisible" center>
-            <h1>555</h1>
+            <el-table :data="studentInSecData" >
+              <el-table-column fixed prop="id" label="รหัสนักเรียน" align='center' />
+              <el-table-column prop="name" label="ชื่อนักเรียน" align='center' />
+            </el-table>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="studentTableVisible = false">ปิด</el-button>
+              <el-upload
+                :action="selectedSecId"
+                :on-change="handleChange"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                multiple
+                :limit="3"
+                :on-exceed="handleExceed"
+                :file-list="fileList">
+                <el-button size="small" type="primary">เพิ่มนักศึกษา</el-button>
+              </el-upload>
             </span>
           </el-dialog>
         </template>
@@ -82,6 +96,8 @@ import axios from "axios";
 export default {
   data() {
     return {
+      selectedSecId: "",
+      fileList: [],
       addSecFormVisible: false,
       editSecFormVisible: false,
       studentTableVisible: false,
@@ -98,6 +114,7 @@ export default {
       subjectData: [],
       teacherData: [],
       studentData: [],
+      studentInSecData: [],
     };
   },
   mounted() {
@@ -201,9 +218,18 @@ export default {
           console.log(error);
         });
     },
+    getStudentInSecData(sec_id) {
+      axios
+        .get("http://localhost:8080/api/student/?sec_id=" + sec_id)
+        .then((response) => {
+          const res = response.data
+          this.studentInSecData = res
+        })
+    },
     handleStudentDetail(index, row) {
-      console.log(index, row)
       this.studentTableVisible = true
+      this.selectedSecId = "http://localhost:8080/upload/?sec_id=" + row.sec_id
+      this.getStudentInSecData(row.sec_id);
     },
     handleEdit(index, row) {
       axios
@@ -220,6 +246,8 @@ export default {
     async handleDelete(index, row) {
       if (confirm('ยืนยันการลบห้องเรียนหรือไม่?')) {
         axios
+          .delete("http://localhost:8080/api/student/?sec_id=" + row.sec_id)
+        axios
           .delete("http://localhost:8000/sec/?sec_id=" + row.sec_id)
           .then((response) => {
             console.log(response.data);
@@ -232,6 +260,22 @@ export default {
     },
     forcesRerender() {
       this.$router.go()
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList.slice(-1);
+      this.forcesRerender()
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`Cancel the transfert of ${ file.name } ?`);
     }
   },
 };
