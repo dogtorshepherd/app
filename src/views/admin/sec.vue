@@ -6,7 +6,7 @@
   import SecDataTable from "@/components/SecDataTable.vue";
   
   export default {
-    name: "Subject",
+    name: "Sec",
       components: {
         SecDataTable,
       },
