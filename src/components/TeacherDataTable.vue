@@ -1,14 +1,23 @@
 <template>
   <div>
-    <el-table :data="teacherData" style="width: 90%;margin: 50px">
+
+    <el-table
+      :data="teacherData.filter(data => !search || data.firstname.toLowerCase().includes(search.toLowerCase()) || data.lastname.toLowerCase().includes(search.toLowerCase()))"
+      style="width: 90%;margin: 50px">
       <el-table-column fixed prop="user_id" label="รหัสอาจารย์" align='center' />
       <el-table-column prop="firstname" label="ชื่อ" align='center' />
       <el-table-column prop="lastname" label="นามสกุล" align='center' />
       <el-table-column prop="number" label="เบอร์โทรศัพท์" align='center' />
       <el-table-column prop="email" label="อีเมล" align='center' />
       <el-table-column align='center'>
+
         <template #header>
-          <el-button @click="addTeacherFormVisible = true">เพิ่มอาจารย์</el-button>
+          <v-container fill-height fluid>
+            <v-row align="center" justify="center">
+                <el-input v-model="search" size="mini" placeholder="ค้นหาอาจารย์" />
+                <el-button @click="addTeacherFormVisible = true">เพิ่มอาจารย์</el-button>
+            </v-row>
+          </v-container>
 
           <el-dialog title="เพิ่มอาจารย์" :visible.sync="addTeacherFormVisible" center>
             <el-form :model="addTeacherFormData">
@@ -71,15 +80,8 @@
           </el-dialog>
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-            >แก้ไข</el-button
-          >
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-            >ลบ</el-button
-          >
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">แก้ไข</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">ลบ</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,6 +94,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      search: '',
       addTeacherFormVisible: false,
       editTeacherFormVisible: false,
       addTeacherFormData: {
@@ -193,7 +196,7 @@ export default {
         .then((response) => {
           const teacher = response.data.filter(
             (user) => user.role === 'teacher'
-            );
+          );
           this.teacherData = teacher;
         })
         .catch((error) => {
@@ -240,31 +243,40 @@ export default {
 .action-item:hover {
   cursor: pointer;
 }
+
 .el-alert {
   margin: 20px 0 0;
 }
+
 .el-alert:first-child {
   margin: 0;
 }
+
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-col {
   border-radius: 4px;
 }
+
 .bg-purple-dark {
   background: #99a9bf;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
+
 .bg-purple-light {
   background: #e5e9f2;
 }
+
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
 }
+
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
