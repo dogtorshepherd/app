@@ -5,10 +5,23 @@
       <el-table-column prop="question" label="โจทย์" />
       <el-table-column align='right' width="150">
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">ตอบ</el-button>
+          <el-button size="small" @click="handleAnswer(scope.$index, scope.row)">ตอบ</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog :title="selectedTitle" :visible.sync="answerFormVisible" center>
+      <el-form :model="answerFormData">
+        <el-form-item :label="selectedQuestion">
+        </el-form-item>
+        <el-form-item label="คำตอบ">
+          <el-input v-model="answerFormData.answer" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="answerFormVisible = false">ยกเลิก</el-button>
+        <el-button type="primary" @click="submitAnswerForm">ตกลง</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -45,13 +58,16 @@ export default {
 
       uploadExamUrl: "",
       selectedSecId: "",
+      selectedTitle: "",
+      selectedQuestion: "",
+      selectedAnswer: "",
       fileList: [],
       addManualVisible: false,
       addAutoVisible: false,
       addSecFormVisible: false,
       editSecFormVisible: false,
       examTableVisible: false,
-      editFormVisible: false,
+      answerFormVisible: false,
       addSecFormData: {
         subject_id: '',
         teacher_id: '',
@@ -66,7 +82,7 @@ export default {
         answer: '',
         score: '',
       },
-      editFormData: {
+      answerFormData: {
         exam_id: '',
         sec_id: '',
         question: '',
@@ -124,40 +140,50 @@ export default {
           });
       }
     },
-    submitEditForm() {
-      const { exam_id, sec_id, question, answer, score } = this.editFormData
-      // console.log("exam_id : " + exam_id)
-      // console.log("question : " + question)
-      // console.log("answer : " + answer)
-      // console.log("score : " + score)
-      const requestOptions = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          exam_id: exam_id,
-          sec_id: sec_id,
-          question: question,
-          answer: answer,
-          score: score,
-        })
-      };
-      fetch('http://localhost:8000/exam/', requestOptions)
-        .then(async response => {
-          const data = await response.json();
-          if (!response.ok) {
-            console.log('Fail');
-            const error = (data && data.message) || response.status;
-            console.error('There was an error!', error);
-          } else {
-            console.log('Success');
-          }
-          this.editFormVisible = false
-          this.forcesRerender()
-        })
-        .catch(error => {
-          this.errorMessage = error;
-          console.error('There was an error!', error);
-        });
+    submitAnswerForm() {
+      console.log(typeof(this.answerFormData.answer))
+      console.log(typeof(this.selectedAnswer))
+      console.log(this.answerFormData.answer)
+      console.log(this.selectedAnswer)
+      if(this.answerFormData.answer == this.selectedAnswer){
+        console.log("1")
+      } else {
+        console.log("0")
+      }
+      
+      // const { exam_id, sec_id, question, answer, score } = this.answerFormData
+      // // console.log("exam_id : " + exam_id)
+      // // console.log("question : " + question)
+      // // console.log("answer : " + answer)
+      // // console.log("score : " + score)
+      // const requestOptions = {
+      //   method: 'PUT',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     exam_id: exam_id,
+      //     sec_id: sec_id,
+      //     question: question,
+      //     answer: answer,
+      //     score: score,
+      //   })
+      // };
+      // fetch('http://localhost:8000/exam/', requestOptions)
+      //   .then(async response => {
+      //     const data = await response.json();
+      //     if (!response.ok) {
+      //       console.log('Fail');
+      //       const error = (data && data.message) || response.status;
+      //       console.error('There was an error!', error);
+      //     } else {
+      //       console.log('Success');
+      //     }
+      this.answerFormVisible = false
+      // this.forcesRerender()
+      //   })
+      //   .catch(error => {
+      //     this.errorMessage = error;
+      //     console.error('There was an error!', error);
+      //   });
     },
     getSecData() {
       const config = {
@@ -243,24 +269,30 @@ export default {
       // this.uploadExamUrl = "http://localhost:8080/uploadExam/?sec_id=" + row.sec_id
       this.getQuestData(row.sec_id);
     },
-    handleEdit(index, row) {
-      axios
-        .get("http://localhost:8000/exam/?exam_id=" + row.exam_id)
-        .then((response) => {
-          const { exam_id, sec_id, answer, question, score } = response.data
-          // console.log("exam_id : " + exam_id)
-          // console.log("sec_id : " + sec_id)
-          // console.log("answer : " + answer)
-          // console.log("question : " + question)
-          // console.log("score : " + score)
-          this.editFormData.exam_id = exam_id
-          this.editFormData.sec_id = sec_id
-          this.editFormData.answer = answer
-          this.editFormData.question = question
-          this.editFormData.score = score
-          console.log(this.editFormData)
-        })
-      this.editFormVisible = true
+    handleAnswer(index, row) {
+      // console.log(index, row)
+      this.selectedTitle = "ข้อที่ " + (index + 1)
+      this.selectedQuestion = row.question
+      this.selectedAnswer = row.answer
+      console.log("selectedAnswer : " + this.selectedAnswer)
+      // console.log("selectedQuestion : " + this.selectedQuestion)
+      // axios
+      //   .get("http://localhost:8000/exam/?exam_id=" + row.exam_id)
+      //   .then((response) => {
+      //     const { exam_id, sec_id, answer, question, score } = response.data
+      //     // console.log("exam_id : " + exam_id)
+      //     // console.log("sec_id : " + sec_id)
+      //     // console.log("answer : " + answer)
+      //     // console.log("question : " + question)
+      //     // console.log("score : " + score)
+      //     this.answerFormData.exam_id = exam_id
+      //     this.answerFormData.sec_id = sec_id
+      //     this.answerFormData.answer = answer
+      //     this.answerFormData.question = question
+      //     this.answerFormData.score = score
+      //     console.log(this.answerFormData)
+      //   })
+      this.answerFormVisible = true
     },
     async handleDelete(index, row) {
       if (confirm('ยืนยันการลบข้อสอบหรือไม่?')) {
