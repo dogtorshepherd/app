@@ -271,10 +271,9 @@ export default {
       axios
         .get("http://localhost:8000/auth/users/me/", config)
         .then((response) => {
-          const teacherId = response.data.user_id
-          // this.subjectData = response.data;
+          const studentId = response.data.user_id
           axios
-            .get("http://localhost:8080/api/sec/" + teacherId)
+            .get("http://localhost:8080/api/sec/student?studentId=" + studentId)
             .then((response) => {
               this.secData = response.data;
             })

@@ -183,6 +183,18 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
+        path: 'student',
+        component: () => import('@/views/teacher/student'),
+        name: 'Student',
+        meta: { title: 'นักศึกษา', icon: 'el-icon-s-custom', roles: ['teacher'] }
+      }
+    ]
+  },
+  {
+    path: '/teacher',
+    component: Layout,
+    children: [
+      {
         path: 'exam',
         component: () => import('@/views/teacher/exam'),
         name: 'Exam',

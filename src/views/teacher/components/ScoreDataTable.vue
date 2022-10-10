@@ -164,7 +164,7 @@ export default {
     },
     getStudentInSecData(sec_id) {
       axios
-        .get("http://localhost:8080/api/student/?sec_id=" + sec_id)
+        .get("http://localhost:8080/api/student/score/?sec_id=" + sec_id)
         .then((response) => {
           const res = response.data
           this.studentInSecData = res
