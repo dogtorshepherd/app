@@ -1,120 +1,14 @@
 <template>
   <div>
-    <el-table :data="secData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" align='center' />
-      <el-table-column prop="subject" label="ชื่อวิชา" align='center' />
-      <el-table-column label="" align='center'>
+    <el-table :data="questData" style="width: 90%;margin: 50px">
+      <el-table-column type="index" label="ข้อที่" width="50" />
+      <el-table-column prop="question" label="โจทย์" />
+      <el-table-column align='right' width="150">
         <template #default="scope">
-          <el-button size="small" @click="handleManualAddBtnClick(scope.$index, scope.row)">เพิ่มข้อสอบแบบกำหนดเอง
-          </el-button>
-          <el-button size="small" @click="handleAutoAddBtnClick(scope.$index, scope.row)">เพิ่มข้อสอบอัตโนมัติ
-          </el-button>
-          <el-button size="small" @click="handleExamDetailBtnClick(scope.$index, scope.row)">รายละเอียดข้อสอบ
-          </el-button>
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">ตอบ</el-button>
         </template>
       </el-table-column>
     </el-table>
-
-    <el-dialog title="เพิ่มข้อสอบแบบกำหนดเอง" :visible.sync="addManualVisible" center>
-      <el-form :model="addManualFormData">
-        <el-form-item label="คำถาม">
-          <el-input v-model="addManualFormData.question" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="คำตอบ">
-          <el-input v-model="addManualFormData.answer" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="คะแนน">
-          <el-input v-model="addManualFormData.score" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addManualVisible = false">ยกเลิก</el-button>
-        <el-button type="primary" @click="submitAddManualForm">ตกลง</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog title="เพิ่มข้อสอบอัตโนมัติ" :visible.sync="addAutoVisible" center>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
-        <el-form-item label="เลือกประเภทของคำถาม" prop="type">
-          <el-checkbox-group v-model="ruleForm.type">
-            <el-checkbox label="INSERT" name="type"></el-checkbox>
-            <el-checkbox label="UPDATE" name="type"></el-checkbox>
-            <el-checkbox label="DELETE" name="type"></el-checkbox>
-            <el-checkbox label="SELECT" name="type"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="ระดับของคำถาม" prop="level">
-          <el-checkbox-group v-model="ruleForm.level">
-            <el-checkbox label="ความจำ" name="level"></el-checkbox>
-            <el-checkbox label="ความเข้าใจ" name="level"></el-checkbox>
-            <el-checkbox label="ประยุกต์" name="level"></el-checkbox>
-            <el-checkbox label="วิเคราะห์" name="level"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="จำนวนข้อ" prop="amount">
-          <el-input v-model.number="ruleForm.amount"></el-input>
-        </el-form-item>
-        <el-form-item label="คะแนน" prop="score">
-          <el-input v-model.number="ruleForm.score"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="addAutoVisible = false">ยกเลิก</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')">ตกลง</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-
-    <el-dialog title="แก้ไขข้อสอบ" :visible.sync="editFormVisible" center>
-      <el-form :model="editFormData">
-        <el-form-item label="คำถาม">
-          <el-input v-model="editFormData.question" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="คำตอบ">
-          <el-input v-model="editFormData.answer" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="คะแนน">
-          <el-input v-model="editFormData.score" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editFormVisible = false">ยกเลิก</el-button>
-        <el-button type="primary" @click="submitEditForm">ตกลง</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog title="ข้อสอบ" :visible.sync="examTableVisible" center>
-      <!-- <el-table :data="studentInSecData" >
-        <el-table-column fixed prop="id" label="รหัสนักเรียน" align='center' />
-        <el-table-column prop="name" label="ชื่อนักเรียน" align='center' />
-        <el-table-column prop="score" label="คะแนน" align='center' />
-      </el-table> -->
-      <el-table :data="questData" style="width: 90%;margin: 50px">
-        <el-table-column type="index" label="ข้อที่" width="50" />
-        <!-- <el-table-column fixed prop="num" label="ข้อ" align='center' width="50" /> -->
-        <el-table-column prop="question" label="โจทย์" />
-        <!-- <el-table-column prop="answer" label="เฉลย" align='center' /> -->
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <p>เฉลย: {{ props.row.answer }}</p>
-            <p>คะแนน: {{ props.row.score }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column align='right' width="150">
-          <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">แก้ไข</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">ลบ</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-upload :action="uploadExamUrl" :on-success="handleSuccess" :on-change="handleChange"
-          :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3"
-          :on-exceed="handleExceed" :file-list="fileList">
-          <el-button size="small" type="primary">เพิ่มข้อสอบอัตโนมัติ</el-button>
-        </el-upload>
-        <el-button size="small" type="primary">เพิ่มข้อสอบแบบกำหนดเอง</el-button>
-      </span> -->
-    </el-dialog>
   </div>
 </template>
 
@@ -191,6 +85,7 @@ export default {
     this.getSecData();
     this.getSubjectData();
     this.getUserData();
+    this.getQuestData(8);
   },
   methods: {
     submitAddManualForm(index, row) {
