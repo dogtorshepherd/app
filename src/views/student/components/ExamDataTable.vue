@@ -1,8 +1,20 @@
 <template>
   <div>
-    <el-table :data="questData" style="width: 90%;margin: 50px">
+    <el-table :data="questData" style="width: 90%;margin: 50px" max-height="680">
       <el-table-column type="index" label="ข้อที่" width="50" />
       <el-table-column prop="question" label="โจทย์" />
+      <el-table-column  prop="" label="เวลาเริ่ม" width="150">
+        <template #default="scope">
+          09:00 น.
+          <!-- <el-button size="small" @click="handleAnswer(scope.$index, scope.row)">ตอบ</el-button> -->
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="เวลาส่ง" width="150">
+        <template #default="scope">
+          12:00 น.
+          <!-- <el-button size="small" @click="handleAnswer(scope.$index, scope.row)">ตอบ</el-button> -->
+        </template>
+      </el-table-column>
       <el-table-column align='right' width="150">
         <template #default="scope">
           <el-button size="small" @click="handleAnswer(scope.$index, scope.row)">ตอบ</el-button>
@@ -18,8 +30,9 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitCheckAnswerForm">ตรวจคำตอบ</el-button>
+        <el-button type="primary" @click="submitAnswerForm">ส่งคำตอบ</el-button>
         <el-button @click="answerFormVisible = false">ยกเลิก</el-button>
-        <el-button type="primary" @click="submitAnswerForm">ตกลง</el-button>
       </span>
     </el-dialog>
   </div>

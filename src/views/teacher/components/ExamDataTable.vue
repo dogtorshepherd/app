@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="secData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" align='center' />
+      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" width="200" align='center' />
       <el-table-column prop="subject" label="ชื่อวิชา" align='center' />
       <el-table-column label="" align='center'>
         <template #default="scope">
@@ -10,6 +10,8 @@
           <el-button size="small" @click="handleAutoAddBtnClick(scope.$index, scope.row)">เพิ่มข้อสอบอัตโนมัติ
           </el-button>
           <el-button size="small" @click="handleExamDetailBtnClick(scope.$index, scope.row)">รายละเอียดข้อสอบ
+          </el-button>
+          <el-button size="small" @click="handleExamTimeBtnClick(scope.$index, scope.row)">เวลาสอบ
           </el-button>
         </template>
       </el-table-column>
