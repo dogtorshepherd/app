@@ -25,7 +25,7 @@
         id="image0"
         width="571"
         height="577"
-        href="https://e-exam.io/img/logos/e-exam.io.svg"
+        href="https://pngimg.com/uploads/mysql/mysql_PNG35.png"
       />
     </defs>
   </svg>
