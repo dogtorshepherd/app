@@ -17,6 +17,9 @@
 
           <el-dialog title="เพิ่มห้องเรียน" :visible.sync="addSecFormVisible" center>
             <el-form :model="addSecFormData">
+              <el-form-item label="รหัสห้องเรียน">
+                <el-input v-model="addSecFormData.sec_id" autocomplete="off" style="width: 200px;" />
+              </el-form-item>
               <el-form-item label="ชื่อวิชา">
                 <el-select v-model="addSecFormData.subject_id" placeholder="เลือกวิชา">
                   <el-option v-for="subject in subjectData" :label="subject.title" :value="subject.subject_id" />
@@ -102,6 +105,7 @@ export default {
       editSecFormVisible: false,
       studentTableVisible: false,
       addSecFormData: {
+        sec_id: '',
         subject_id: '',
         teacher_id: '',
       },
@@ -127,11 +131,12 @@ export default {
       if (this.addSecFormData.subject_id === '' || this.addSecFormData.teacher_id === '') {
         console.log("not valid")
       } else {
-        const { subject_id, teacher_id } = this.addSecFormData
+        const { sec_id, subject_id, teacher_id } = this.addSecFormData
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            sec_id: sec_id,
             subject_id: subject_id,
             teacher_id: teacher_id,
           })
