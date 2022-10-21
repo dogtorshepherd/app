@@ -57,7 +57,7 @@
           </el-dialog>
 
           <el-dialog title="รายชื่อนักเรียน" :visible.sync="studentTableVisible" center>
-            <el-table :data="studentInSecData" >
+            <el-table :data="studentInSecData" max-height="450" >
               <el-table-column fixed prop="id" label="รหัสนักเรียน" align='center' />
               <el-table-column prop="name" label="ชื่อนักเรียน" align='center' />
             </el-table>

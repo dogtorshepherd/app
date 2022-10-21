@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-table :data="secData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" width="200" align='center' />
-      <el-table-column prop="subject" label="ชื่อวิชา" align='center' />
+      <el-table-column fixed prop="sec_id" label="รหัสห้องเรียน" width="300" align='center' />
+      <el-table-column prop="subject" label="ชื่อวิชา" width="200" align='center' />
       <el-table-column label="" align='center'>
         <template #default="scope">
           <el-button size="small" @click="handleManualAddBtnClick(scope.$index, scope.row)">เพิ่มข้อสอบแบบกำหนดเอง
@@ -90,7 +90,7 @@
         <el-table-column prop="name" label="ชื่อนักเรียน" align='center' />
         <el-table-column prop="score" label="คะแนน" align='center' />
       </el-table> -->
-      <el-table :data="questData" style="width: 90%;margin: 50px">
+      <el-table :data="questData" style="width: 90%;margin: 50px" max-height="400">
         <el-table-column type="index" label="ข้อที่" width="50" />
         <!-- <el-table-column fixed prop="num" label="ข้อ" align='center' width="50" /> -->
         <el-table-column prop="question" label="โจทย์" />
@@ -117,6 +117,16 @@
         <el-button size="small" type="primary">เพิ่มข้อสอบแบบกำหนดเอง</el-button>
       </span> -->
     </el-dialog>
+
+    <el-dialog title="เวลาสอบ" :visible.sync="examTimeVisible" center>
+      <template>
+        <div>
+          <date-picker v-model="time" type="datetime" range placeholder="โปรดเลือกเวลาสอบ" />
+          <el-button type="primary" @click="submitTime">ตกลง</el-button>
+        </div>
+      </template>
+      <!-- <date-picker v-model="time" type="datetime" range placeholder="โปรดเลือกเวลาสอบ" /> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -124,11 +134,14 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import axios from "axios";
 import raw from 'body-parser/lib/types/raw';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
 export default {
+  components: { DatePicker },
   data() {
     return {
-
+      time: [],
       ruleForm: {
         score: '',
         type: [],
@@ -159,6 +172,7 @@ export default {
       addSecFormVisible: false,
       editSecFormVisible: false,
       examTableVisible: false,
+      examTimeVisible: false,
       editFormVisible: false,
       addSecFormData: {
         subject_id: '',
@@ -195,6 +209,34 @@ export default {
     this.getUserData();
   },
   methods: {
+    submitTime() {
+      console.log("time : " + this.time)
+      console.log("secId : " + this.selectedSecId)
+      this.examTimeVisible = false
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          time: this.time,
+          sec_id: this.selectedSecId,
+        })
+      };
+      fetch('http://localhost:8080/api/time', requestOptions)
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            const error = (data && data.message) || response.status;
+            console.error('There was an error!', error);
+          }
+          console.log('Success');
+          this.addManualVisible = false
+          // this.forcesRerender()
+        })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error('There was an error!', error);
+        });
+    },
     submitAddManualForm(index, row) {
       if (this.addManualFormData.question === '' || this.addManualFormData.answer === '' || this.addManualFormData.score === '') {
         console.log("not valid")
@@ -350,6 +392,10 @@ export default {
       this.examTableVisible = true
       // this.uploadExamUrl = "http://localhost:8080/uploadExam/?sec_id=" + row.sec_id
       this.getQuestData(row.sec_id);
+    },
+    handleExamTimeBtnClick(index, row) {
+      this.examTimeVisible = true
+      this.selectedSecId = row.sec_id
     },
     handleEdit(index, row) {
       axios

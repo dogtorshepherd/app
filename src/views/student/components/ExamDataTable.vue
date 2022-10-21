@@ -114,7 +114,7 @@ export default {
     this.getSecData();
     this.getSubjectData();
     this.getUserData();
-    this.getQuestData(8);
+    this.getQuestData(1);
   },
   methods: {
     submitAddManualForm(index, row) {
@@ -154,10 +154,10 @@ export default {
       }
     },
     submitAnswerForm() {
-      console.log(typeof(this.answerFormData.answer))
-      console.log(typeof(this.selectedAnswer))
-      console.log(this.answerFormData.answer)
-      console.log(this.selectedAnswer)
+      // console.log(typeof(this.answerFormData.answer))
+      // console.log(typeof(this.selectedAnswer))
+      console.log("answer : " + this.answerFormData.answer)
+      console.log("selectedAnswer : " + this.selectedAnswer)
       if(this.answerFormData.answer == this.selectedAnswer){
         console.log("1")
       } else {

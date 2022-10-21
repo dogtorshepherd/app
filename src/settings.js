@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'E-Exam',
+  title: 'SQL Exam',
 
   /**
    * @type {boolean} true | false
