@@ -1,62 +1,23 @@
 <template>
-  <div>
-    <el-table :data="subjectData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="subject_id" label="รหัสรายวิชา" align='center' />
-      <el-table-column prop="title" label="ชื่อวิชา" align='center' />
-      <el-table-column prop="des" label="คำอธิบายรายวิชา" align='center' />
-      <el-table-column align='center'>
-        <template #header>
-          <el-button @click="$router.push('/subject/create')">เพิ่มรายวิชา</el-button>
-
-          <el-dialog title="เพิ่มรายวิชา" :visible.sync="addSubjectFormVisible" center>
-            <el-form :model="addSubjectFormData">
-              <el-form-item label="รหัสรายวิชา">
-                <el-input v-model="addSubjectFormData.subject_id" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="ชื่อวิชา">
-                <el-input v-model="addSubjectFormData.title" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="คำอธิบายรายวิชา">
-                <el-input v-model="addSubjectFormData.des" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="addSubjectFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitAddSubjectForm">ตกลง</el-button>
-            </span>
-          </el-dialog>
-
-          <el-dialog title="แก้ไขข้อมูลรายวิชา" :visible.sync="editSubjectFormVisible" center>
-            <el-form :v-model="editSubjectFormData">
-              <el-form-item label="รหัสรายวิชา">
-                <el-input v-model="editSubjectFormData.subject_id" autocomplete="off" :disabled="true"></el-input>
-              </el-form-item>
-              <el-form-item label="ชื่อวิชา">
-                <el-input v-model="editSubjectFormData.title" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="คำอธิบายรายวิชา">
-                <el-input v-model="editSubjectFormData.des" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="editSubjectFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitEditSubjectForm">ตกลง</el-button>
-            </span>
-          </el-dialog>
-        </template>
-        <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-            >แก้ไข</el-button
-          >
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-            >ลบ</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
+  <div class="createPost-container">
+    <el-form :model="addSubjectFormData" class="form-container">
+      <div class="createPost-main-container">
+        <div class="postInfo-container">
+          <el-form-item label="รหัสรายวิชา">
+            <el-input v-model="addSubjectFormData.subject_id" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="ชื่อวิชา">
+            <el-input v-model="addSubjectFormData.title" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="คำอธิบายรายวิชา">
+            <el-input v-model="addSubjectFormData.des" autocomplete="off"></el-input>
+          </el-form-item>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitAddSubjectForm">ตกลง</el-button>
+          </span>
+        </div>
+      </div>
+    </el-form>
   </div>
 </template>
 
@@ -108,7 +69,8 @@ export default {
             }
             console.log('Success');
             this.addSubjectFormVisible = false
-            this.forcesRerender()
+            // this.forcesRerender()
+            this.$router.push('/subject/list')
           })
           .catch(error => {
             this.errorMessage = error;
@@ -185,35 +147,81 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "~@/styles/mixin.scss";
+
+.createPost-container {
+  position: relative;
+
+  .createPost-main-container {
+    padding: 40px 45px 20px 50px;
+
+    .postInfo-container {
+      position: relative;
+      @include clearfix;
+      margin-bottom: 10px;
+
+      .postInfo-container-item {
+        float: left;
+      }
+    }
+  }
+
+  .word-counter {
+    width: 40px;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+  }
+}
+
+.article-textarea ::v-deep {
+  textarea {
+    padding-right: 40px;
+    resize: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #bfcbd9;
+  }
+}
+
 .action-item:hover {
   cursor: pointer;
 }
+
 .el-alert {
   margin: 20px 0 0;
 }
+
 .el-alert:first-child {
   margin: 0;
 }
+
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-col {
   border-radius: 4px;
 }
+
 .bg-purple-dark {
   background: #99a9bf;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
+
 .bg-purple-light {
   background: #e5e9f2;
 }
+
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
 }
+
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;

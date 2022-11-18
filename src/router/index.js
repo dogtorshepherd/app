@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from "@/layout";
 
 /* Router Modules */
 // import componentsRouter from './modules/components'
@@ -40,49 +40,49 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/redirect',
+    path: "/redirect",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
+        path: "/redirect/:path(.*)",
+        component: () => import("@/views/redirect/index"),
+      },
+    ],
   },
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    path: "/login",
+    component: () => import("@/views/login/index"),
+    hidden: true,
   },
   {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
+    path: "/auth-redirect",
+    component: () => import("@/views/login/auth-redirect"),
+    hidden: true,
   },
   {
-    path: '/404',
-    component: () => import('@/views/error-page/404'),
-    hidden: true
+    path: "/404",
+    component: () => import("@/views/error-page/404"),
+    hidden: true,
   },
   {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
+    path: "/401",
+    component: () => import("@/views/error-page/401"),
+    hidden: true,
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/profile',
+    redirect: "/profile",
     children: [
       {
-        path: 'profile',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'el-icon-menu', affix: true }
-      }
+        path: "profile",
+        component: () => import("@/views/dashboard/index"),
+        name: "Profile",
+        meta: { title: "Profile", icon: "el-icon-menu", affix: true },
+      },
     ],
-    roles: ['admin', 'teacher', 'student']
+    roles: ["admin", "teacher", "student"],
   },
   // {
   //   path: '/documentation',
@@ -110,20 +110,20 @@ export const constantRoutes = [
   //   ]
   // },
   {
-    path: '/profile',
+    path: "/profile",
     component: Layout,
-    redirect: '/profile/index',
+    redirect: "/profile/index",
     hidden: true,
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
-      }
-    ]
-  }
-]
+        path: "index",
+        component: () => import("@/views/profile/index"),
+        name: "Profile",
+        meta: { title: "Profile", icon: "user", noCache: true },
+      },
+    ],
+  },
+];
 
 /**
  * asyncRoutes
@@ -131,100 +131,202 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/admin',
+    path: "/teacher",
+    component: Layout,
+    redirect: "/teacher/list",
+    name: "Teacher",
+    meta: {
+      title: "อาจารย์",
+      icon: "el-icon-s-custom",
+      roles: ["admin"],
+    },
+    children: [
+      {
+        path: "create",
+        component: () => import("@/views/teacher/create"),
+        name: "CreateTeacher",
+        meta: { title: "เพิ่มอาจารย์", icon: "edit" },
+      },
+      {
+        path: "list",
+        component: () => import("@/views/admin/teacher"),
+        name: "TeacherList",
+        meta: { title: "รายชื่ออาจารย์", icon: "list" },
+      },
+    ],
+  },
+  // {
+  //   path: '/admin',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'teacher',
+  //       component: () => import('@/views/admin/teacher'),
+  //       name: 'Teacher',
+  //       meta: { title: 'อาจารย์', icon: 'el-icon-s-custom', roles: ['admin'] }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/admin',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'student',
+  //       component: () => import('@/views/admin/student'),
+  //       name: 'Student',
+  //       meta: { title: 'นักศึกษา', icon: 'el-icon-s-custom', roles: ['admin'] }
+  //     }
+  //   ]
+  // },
+  {
+    path: "/subject",
+    component: Layout,
+    redirect: "/subject/list",
+    name: "Subject",
+    meta: {
+      title: "รายวิชา",
+      icon: "el-icon-collection",
+      roles: ["admin"],
+    },
+    children: [
+      {
+        path: "create",
+        component: () => import("@/views/subject/create"),
+        name: "CreateSubject",
+        meta: { title: "เพิ่มรายวิชา", icon: "edit" },
+      },
+      {
+        path: "list",
+        component: () => import("@/views/admin/subject"),
+        name: "SubjectList",
+        meta: { title: "รายชื่อวิชา", icon: "list" },
+      },
+    ],
+  },
+  // {
+  //   path: '/admin',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'subject',
+  //       component: () => import('@/views/admin/subject'),
+  //       name: 'Subject',
+  //       meta: { title: 'รายวิชา', icon: 'el-icon-collection', roles: ['admin'] }
+  //     }
+  //   ]
+  // },
+  {
+    path: "/sec",
+    component: Layout,
+    redirect: "/sec/list",
+    name: "Sec",
+    meta: {
+      title: "กลุ่ม",
+      icon: "el-icon-house",
+      roles: ["admin"],
+    },
+    children: [
+      {
+        path: "create",
+        component: () => import("@/views/sec/create"),
+        name: "CreateSec",
+        meta: { title: "เพิ่มกลุ่ม", icon: "edit" },
+      },
+      {
+        path: "list",
+        component: () => import("@/views/admin/sec"),
+        name: "SecList",
+        meta: { title: "รายชื่อกลุ่ม", icon: "list" },
+      },
+      {
+        path: "edit/:id(\\d+)",
+        component: () => import("@/views/sec/edit"),
+        name: "EditSec",
+        meta: {
+          title: "รายชื่อนักศึกษา",
+          noCache: true,
+          activeMenu: "/sec/list",
+        },
+        hidden: true,
+      },
+    ],
+  },
+  // {
+  //   path: '/admin',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'sec',
+  //       component: () => import('@/views/admin/sec'),
+  //       name: 'Sec',
+  //       meta: { title: 'กลุ่ม', icon: 'el-icon-house', roles: ['admin'] }
+  //     }
+  //   ]
+  // },
+  {
+    path: "/teacher",
     component: Layout,
     children: [
       {
-        path: 'teacher',
-        component: () => import('@/views/admin/teacher'),
-        name: 'Teacher',
-        meta: { title: 'อาจารย์', icon: 'el-icon-s-custom', roles: ['admin'] }
-      }
-    ]
+        path: "student",
+        component: () => import("@/views/teacher/student"),
+        name: "Student",
+        meta: {
+          title: "นักศึกษา",
+          icon: "el-icon-s-custom",
+          roles: ["teacher"],
+        },
+      },
+    ],
   },
   {
-    path: '/admin',
+    path: "/teacher",
     component: Layout,
     children: [
       {
-        path: 'student',
-        component: () => import('@/views/admin/student'),
-        name: 'Student',
-        meta: { title: 'นักศึกษา', icon: 'el-icon-s-custom', roles: ['admin'] }
-      }
-    ]
+        path: "exam",
+        component: () => import("@/views/teacher/exam"),
+        name: "Exam",
+        meta: {
+          title: "การทดสอบ",
+          icon: "el-icon-edit-outline",
+          roles: ["teacher"],
+        },
+      },
+    ],
   },
   {
-    path: '/admin',
+    path: "/teacher",
     component: Layout,
     children: [
       {
-        path: 'subject',
-        component: () => import('@/views/admin/subject'),
-        name: 'Subject',
-        meta: { title: 'รายวิชา', icon: 'el-icon-collection', roles: ['admin'] }
-      }
-    ]
+        path: "score",
+        component: () => import("@/views/teacher/score"),
+        name: "Score",
+        meta: {
+          title: "ผลการสอบ",
+          icon: "el-icon-s-claim",
+          roles: ["teacher"],
+        },
+      },
+    ],
   },
   {
-    path: '/admin',
+    path: "/student",
     component: Layout,
     children: [
       {
-        path: 'sec',
-        component: () => import('@/views/admin/sec'),
-        name: 'Sec',
-        meta: { title: 'ห้องเรียน', icon: 'el-icon-house', roles: ['admin'] }
-      }
-    ]
-  },
-  {
-    path: '/teacher',
-    component: Layout,
-    children: [
-      {
-        path: 'student',
-        component: () => import('@/views/teacher/student'),
-        name: 'Student',
-        meta: { title: 'นักศึกษา', icon: 'el-icon-s-custom', roles: ['teacher'] }
-      }
-    ]
-  },
-  {
-    path: '/teacher',
-    component: Layout,
-    children: [
-      {
-        path: 'exam',
-        component: () => import('@/views/teacher/exam'),
-        name: 'Exam',
-        meta: { title: 'การทดสอบ', icon: 'el-icon-edit-outline', roles: ['teacher'] }
-      }
-    ]
-  },
-  {
-    path: '/teacher',
-    component: Layout,
-    children: [
-      {
-        path: 'score',
-        component: () => import('@/views/teacher/score'),
-        name: 'Score',
-        meta: { title: 'ผลการสอบ', icon: 'el-icon-s-claim', roles: ['teacher'] }
-      }
-    ]
-  },
-  {
-    path: '/student',
-    component: Layout,
-    children: [
-      {
-        path: 'exam',
-        component: () => import('@/views/student/exam'),
-        name: 'Exam',
-        meta: { title: 'การทดสอบ', icon: 'el-icon-edit-outline', roles: ['student'] }
-      }
-    ]
+        path: "exam",
+        component: () => import("@/views/student/exam"),
+        name: "Exam",
+        meta: {
+          title: "การทดสอบ",
+          icon: "el-icon-edit-outline",
+          roles: ["student"],
+        },
+      },
+    ],
   },
   // {
   //   path: '/permission',
@@ -481,21 +583,22 @@ export const asyncRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/', hidden: true }
-]
+  { path: "*", redirect: "/", hidden: true },
+];
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes,
+  });
 
-const router = createRouter()
+const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;

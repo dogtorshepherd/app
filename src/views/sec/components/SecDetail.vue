@@ -1,105 +1,45 @@
 <template>
-  <div>
-    <el-table :data="secData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="sec_id" label="กลุ่มที่" align='center' />
-      <el-table-column prop="subject" label="รหัส - วิชา" align='center' />
-      <el-table-column prop="teacher" label="ชื่ออาจารย์" align='center' />
-      <el-table-column label="รายชื่อนักศึกษา" align='center'>
-        <template #default="scope">
-          <el-button @click="$router.push('/sec/edit/'+scope.row.sec_id)">รายละเอียด</el-button>
-          <!-- <el-button size="small" @click="handleStudentDetail(scope.$index, scope.row)" >รายละเอียด</el-button > -->
-        </template>
-      </el-table-column>
-      <el-table-column align='center'>
-        <template #header>
-          <el-button @click="$router.push('/sec/create')">เพิ่มกลุ่ม</el-button>
-
-          <el-dialog title="เพิ่มกลุ่ม" :visible.sync="addSecFormVisible" center>
-            <el-form :model="addSecFormData">
-              <el-form-item label="รหัสกลุ่ม">
-                <el-input v-model="addSecFormData.sec_id" autocomplete="off" style="width: 200px;" />
-              </el-form-item>
-              <el-form-item label="ชื่อวิชา">
-                <el-select v-model="addSecFormData.subject_id" placeholder="เลือกวิชา">
-                  <el-option v-for="subject in subjectData" :label="subject.title" :value="subject.subject_id" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="อาจารย์ผู้สอน">
-                <el-select v-model="addSecFormData.teacher_id" placeholder="เลือกอาจารย์">
-                  <el-option v-for="teacher in teacherData" :label="teacher.firstname + ' ' + teacher.lastname"
-                    :value="teacher.user_id" />
-                </el-select>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="addSecFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitAddSecForm">ตกลง</el-button>
-            </span>
-          </el-dialog>
-
-          <el-dialog title="แก้ไขข้อมูลกลุ่ม" :visible.sync="editSecFormVisible" center>
-            <el-form :v-model="editSecFormData">
-              <el-form-item label="รหัส - วิชา">
-                <el-select v-model="editSecFormData.subject_id" placeholder="เลือกวิชา">
-                  <el-option v-for="subject in subjectData" :label="subject.subject_id + ' - ' + subject.title"
-                    :value="subject.subject_id" />
-                </el-select>
-              </el-form-item>
-              <el-form-item label="อาจารย์ผู้สอน">
-                <el-select v-model="editSecFormData.teacher_id" placeholder="เลือกอาจารย์">
-                  <el-option v-for="teacher in teacherData" :label="teacher.firstname + ' ' + teacher.lastname"
-                    :value="teacher.user_id" />
-                </el-select>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="editSecFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitEditSecForm">ตกลง</el-button>
-            </span>
-          </el-dialog>
-
-          <el-dialog title="รายชื่อนักศึกษา" :visible.sync="studentTableVisible" center>
-            <el-table :data="studentInSecData" max-height="450">
-              <el-table-column type="index" width="100" label="ลำดับที่" align='center'/>
-              <el-table-column prop="id" label="รหัสนักศึกษา" align='center' />
-              <el-table-column prop="name" label="ชื่อนักศึกษา" align='center' />
-            </el-table>
-            <span slot="footer" class="dialog-footer">
-              <el-row>
-                <el-col :span="6">
-                  <div class="grid-content"></div>
-                </el-col>
-                <el-col :span="6">
-                  <div>
-                    <!-- <h4>ตัวอย่างไฟล์นักศึกษา</h4> -->
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div>
-                    <el-upload :action="selectedSecId" :on-change="handleChange" :on-preview="handlePreview"
-                      :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3"
-                      :on-exceed="handleExceed" :file-list="fileList">
-                      <el-button size="small" type="primary">เพิ่มไฟล์นักศึกษา</el-button>
-                    </el-upload>
-                  </div>
-                </el-col>
-                <el-col :span="6">
-                  <div>
-                    <el-image style="width: 100px; height: 100px" :src="addStudentCsv" :preview-src-list="srcList" />
-                    <h4>ตัวอย่างไฟล์นักศึกษา .csv</h4>
-                  </div>
-                </el-col>
-
-              </el-row>
-            </span>
-          </el-dialog>
-        </template>
-        <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">แก้ไข</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">ลบ</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div class="createPost-container">
+    <el-form :model="addSecFormData" class="form-container">
+      <div class="createPost-main-container">
+        <div class="postInfo-container">
+          <el-table :data="studentInSecData" max-height="600">
+            <el-table-column type="index" width="100" label="ลำดับที่" align='center' />
+            <el-table-column prop="id" label="รหัสนักศึกษา" align='center' />
+            <el-table-column prop="name" label="ชื่อนักศึกษา" align='center' />
+          </el-table>
+          <br />
+          <span slot="footer" class="dialog-footer">
+            <el-row>
+              <el-col :span="6">
+                <div class="grid-content"></div>
+              </el-col>
+              <el-col :span="6">
+                <div>
+                  <!-- <h4>ตัวอย่างไฟล์นักศึกษา</h4> -->
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div>
+                  <el-upload :action="selectedSecId" :on-change="handleChange" :on-preview="handlePreview"
+                    :on-remove="handleRemove" :before-remove="beforeRemove" multiple :limit="3"
+                    :on-exceed="handleExceed" :file-list="fileList">
+                    <el-button size="small" type="primary">เพิ่มไฟล์นักศึกษา</el-button>
+                  </el-upload>
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div class="action">
+                  <el-image style="width: 100px; height: 100px" :src="addStudentCsv" :preview-src-list="srcList" />
+                  <br/>
+                  <h4 style="margin: 30px;">ตัวอย่างไฟล์นักศึกษา .csv</h4>
+                </div>
+              </el-col>
+            </el-row>
+          </span>
+        </div>
+      </div>
+    </el-form>
   </div>
 </template>
 
@@ -107,6 +47,12 @@
 import axios from "axios";
 
 export default {
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       addStudentCsv: require('@/assets/sec.png'),
@@ -139,6 +85,12 @@ export default {
     this.getSecData();
     this.getSubjectData();
     this.getUserData();
+  },
+  created() {
+    if (this.isEdit) {
+      const id = this.$route.params && this.$route.params.id
+      this.handleStudentDetail(id)
+    }
   },
   methods: {
     submitAddSecForm() {
@@ -204,6 +156,7 @@ export default {
         .get("http://localhost:8080/api/sec")
         .then((response) => {
           this.secData = response.data;
+          console.log(this.secData)
         })
         .catch((error) => {
           console.log(error);
@@ -245,10 +198,10 @@ export default {
           this.studentInSecData = res
         })
     },
-    handleStudentDetail(index, row) {
+    handleStudentDetail(id) {
       this.studentTableVisible = true
-      this.selectedSecId = "http://localhost:8080/upload/?sec_id=" + row.sec_id
-      this.getStudentInSecData(row.sec_id);
+      this.selectedSecId = "http://localhost:8080/upload/?sec_id=" + id
+      this.getStudentInSecData(id);
     },
     handleEdit(index, row) {
       axios
@@ -305,7 +258,44 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "~@/styles/mixin.scss";
+
+.createPost-container {
+  position: relative;
+
+  .createPost-main-container {
+    padding: 40px 45px 20px 50px;
+
+    .postInfo-container {
+      position: relative;
+      @include clearfix;
+      margin-bottom: 10px;
+
+      .postInfo-container-item {
+        float: left;
+      }
+    }
+  }
+
+  .word-counter {
+    width: 40px;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+  }
+}
+
+.article-textarea ::v-deep {
+  textarea {
+    padding-right: 40px;
+    resize: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #bfcbd9;
+  }
+}
+
 .action-item:hover {
   cursor: pointer;
 }
@@ -346,5 +336,54 @@ export default {
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
+}
+
+.action-item:hover {
+  cursor: pointer;
+}
+
+.el-alert {
+  margin: 20px 0 0;
+}
+
+.el-alert:first-child {
+  margin: 0;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.el-col {
+  border-radius: 4px;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+
+.action {
+  position: relative;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

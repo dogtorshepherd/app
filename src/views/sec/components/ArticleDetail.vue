@@ -1,39 +1,64 @@
 <template>
-  <div>
-    <el-table :data="secData" style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="sec_id" label="รหัสกลุ่ม" align='center' />
-      <el-table-column prop="subject" label="ชื่อวิชา" align='center' />
-      <el-table-column label="" align='center'>
-        <template #default="scope">
-          <el-button size="small" @click="handleStudentDetail(scope.$index, scope.row)"
-            >รายละเอียดคะแนน</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-dialog title="ผลการสอบ" :visible.sync="studentTableVisible" center>
-      <el-table :data="studentInSecData" max-height="450" >
-        <el-table-column fixed prop="id" label="รหัสนักศึกษา" align='center' />
-        <el-table-column prop="name" label="ชื่อนักศึกษา" align='center' />
-        <el-table-column prop="score" label="คะแนน" align='center' />
-      </el-table>
-    </el-dialog>
+  <div class="createPost-container">
+    <el-form :model="addSecFormData" class="form-container">
+      <div class="createPost-main-container">
+        <div class="postInfo-container">
+          <el-form-item label="กลุ่มที่">
+            <el-select v-model="addSecFormData.sec_id" placeholder="เลือกกลุ่ม">
+              <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="รหัส - วิชา">
+            <el-select v-model="addSecFormData.subject_id" placeholder="เลือกวิชา">
+              <el-option v-for="subject in subjectData" :label="subject.subject_id + ' - ' + subject.title"
+                :value="subject.subject_id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="อาจารย์ผู้สอน">
+            <el-select v-model="addSecFormData.teacher_id" placeholder="เลือกอาจารย์">
+              <el-option v-for="teacher in teacherData" :label="teacher.firstname + ' ' + teacher.lastname"
+                :value="teacher.user_id" />
+            </el-select>
+          </el-form-item>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitAddSecForm">ตกลง</el-button>
+          </span>
+        </div>
+      </div>
+    </el-form>
   </div>
 </template>
 
 <script>
-  import { getToken, setToken, removeToken } from '@/utils/auth'
 import axios from "axios";
 
 export default {
   data() {
     return {
+      groups: [{
+        value: '1',
+        label: '1'
+      }, {
+        value: '2',
+        label: '2'
+      }, {
+        value: '3',
+        label: '3'
+      }, {
+        value: '4',
+        label: '4'
+      }, {
+        value: '5',
+        label: '5'
+      }],
       selectedSecId: "",
       fileList: [],
       addSecFormVisible: false,
       editSecFormVisible: false,
       studentTableVisible: false,
       addSecFormData: {
+        sec_id: '',
         subject_id: '',
         teacher_id: '',
       },
@@ -59,11 +84,12 @@ export default {
       if (this.addSecFormData.subject_id === '' || this.addSecFormData.teacher_id === '') {
         console.log("not valid")
       } else {
-        const { subject_id, teacher_id } = this.addSecFormData
+        const { sec_id, subject_id, teacher_id } = this.addSecFormData
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            sec_id: sec_id,
             subject_id: subject_id,
             teacher_id: teacher_id,
           })
@@ -77,7 +103,8 @@ export default {
             }
             console.log('Success');
             this.addSecFormVisible = false
-            this.forcesRerender()
+            // this.forcesRerender()
+            this.$router.push('/sec/list')
           })
           .catch(error => {
             this.errorMessage = error;
@@ -113,22 +140,10 @@ export default {
         });
     },
     getSecData() {
-      const config = {
-        headers: { Authorization: `Bearer ${getToken()}` }
-      };
       axios
-        .get("http://localhost:8000/auth/users/me/", config)
+        .get("http://localhost:8080/api/sec")
         .then((response) => {
-          const teacherId = response.data.user_id
-          // this.subjectData = response.data;
-          axios
-            .get("http://localhost:8080/api/sec/teacher?teacherId=" + teacherId)
-            .then((response) => {
-              this.secData = response.data;
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+          this.secData = response.data;
         })
         .catch((error) => {
           console.log(error);
@@ -151,11 +166,11 @@ export default {
           const users = response.data
           const teacher = users.filter(
             (user) => user.role === 'teacher'
-            );
+          );
           this.teacherData = teacher;
           const student = users.filter(
             (user) => user.role === 'student'
-            );
+          );
           this.studentData = student;
         })
         .catch((error) => {
@@ -164,7 +179,7 @@ export default {
     },
     getStudentInSecData(sec_id) {
       axios
-        .get("http://localhost:8080/api/student/score/?sec_id=" + sec_id)
+        .get("http://localhost:8080/api/student/?sec_id=" + sec_id)
         .then((response) => {
           const res = response.data
           this.studentInSecData = res
@@ -219,41 +234,87 @@ export default {
       this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
     },
     beforeRemove(file, fileList) {
-      return this.$confirm(`Cancel the transfert of ${ file.name } ?`);
+      return this.$confirm(`Cancel the transfert of ${file.name} ?`);
     }
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "~@/styles/mixin.scss";
+
+.createPost-container {
+  position: relative;
+
+  .createPost-main-container {
+    padding: 40px 45px 20px 50px;
+
+    .postInfo-container {
+      position: relative;
+      @include clearfix;
+      margin-bottom: 10px;
+
+      .postInfo-container-item {
+        float: left;
+      }
+    }
+  }
+
+  .word-counter {
+    width: 40px;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+  }
+}
+
+.article-textarea ::v-deep {
+  textarea {
+    padding-right: 40px;
+    resize: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #bfcbd9;
+  }
+}
+
 .action-item:hover {
   cursor: pointer;
 }
+
 .el-alert {
   margin: 20px 0 0;
 }
+
 .el-alert:first-child {
   margin: 0;
 }
+
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-col {
   border-radius: 4px;
 }
+
 .bg-purple-dark {
   background: #99a9bf;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
+
 .bg-purple-light {
   background: #e5e9f2;
 }
+
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
 }
+
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;

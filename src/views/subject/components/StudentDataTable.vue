@@ -1,81 +1,85 @@
 <template>
   <div>
-
-    <el-table
-      :data="teacherData.filter(data => !search || data.firstname.toLowerCase().includes(search.toLowerCase()) || data.lastname.toLowerCase().includes(search.toLowerCase()))"
-      style="width: 90%;margin: 50px">
-      <el-table-column fixed prop="user_id" label="รหัสอาจารย์" align='center' />
+    <el-table :data="studentData" style="width: 90%;margin: 50px" max-height="680">
+      <el-table-column fixed prop="user_id" label="รหัสนักศึกษา" align='center' />
       <el-table-column prop="firstname" label="ชื่อ" align='center' />
       <el-table-column prop="lastname" label="นามสกุล" align='center' />
       <!-- <el-table-column prop="number" label="เบอร์โทรศัพท์" align='center' />
       <el-table-column prop="email" label="อีเมล" align='center' /> -->
       <el-table-column align='center'>
-
         <template #header>
-          <v-container fill-height fluid>
-            <v-row align="center" justify="center">
-                <!-- <el-input v-model="search" size="mini" placeholder="ค้นหาอาจารย์" /> -->
-                <el-button @click="$router.push('/teacher/create')">เพิ่มอาจารย์</el-button>
-            </v-row>
-          </v-container>
+          <el-button @click="addStudentFormVisible = true">เพิ่มนักศึกษา</el-button>
 
-          <el-dialog title="เพิ่มอาจารย์" :visible.sync="addTeacherFormVisible" center>
-            <el-form :model="addTeacherFormData">
-              <el-form-item label="รหัสอาจารย์">
-                <el-input v-model="addTeacherFormData.user_id" autocomplete="off"></el-input>
+          <el-dialog title="เพิ่มนักศึกษา" :visible.sync="addStudentFormVisible" center>
+            <el-form :model="addStudentFormData">
+              <el-form-item label="รหัสนักศึกษา">
+                <el-input v-model="addStudentFormData.user_id" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="ชื่อ">
-                <el-input v-model="addTeacherFormData.firstname" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.firstname" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="นามสกุล">
-                <el-input v-model="addTeacherFormData.lastname" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.lastname" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="เบอร์โทรศัพท์">
-                <el-input v-model="addTeacherFormData.number" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.number" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="อีเมล">
-                <el-input v-model="addTeacherFormData.email" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.email" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Username">
-                <el-input v-model="addTeacherFormData.username" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.username" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Password">
-                <el-input v-model="addTeacherFormData.password" autocomplete="off"></el-input>
+                <el-input v-model="addStudentFormData.password" autocomplete="off"></el-input>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="addTeacherFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitAddTeacherForm">ตกลง</el-button>
+              <el-button @click="addStudentFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitAddStudentForm">ตกลง</el-button>
             </span>
           </el-dialog>
 
-          <el-dialog title="แก้ไขข้อมูลอาจารย์" :visible.sync="editTeacherFormVisible" center>
-            <el-form :v-model="editTeacherFormData">
-              <el-form-item label="รหัสอาจารย์">
-                <el-input v-model="editTeacherFormData.user_id" autocomplete="off" :disabled="true"></el-input>
+          <el-dialog title="แก้ไขข้อมูลนักศึกษา" :visible.sync="editStudentFormVisible" center>
+            <el-form :v-model="editStudentFormData">
+              <el-form-item label="รหัสนักศึกษา">
+                <el-input v-model="editStudentFormData.user_id" autocomplete="off" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="ชื่อ">
-                <el-input v-model="editTeacherFormData.firstname" autocomplete="off"></el-input>
+                <el-input v-model="editStudentFormData.firstname" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="นามสกุล">
-                <el-input v-model="editTeacherFormData.lastname" autocomplete="off"></el-input>
+                <el-input v-model="editStudentFormData.lastname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="เบอร์โทรศัพท์">
+                <el-input v-model="editStudentFormData.number" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="อีเมล">
+                <el-input v-model="editStudentFormData.email" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Username">
-                <el-input v-model="editTeacherFormData.username" autocomplete="off"></el-input>
+                <el-input v-model="editStudentFormData.username" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Password">
-                <el-input v-model="editTeacherFormData.password" autocomplete="off"></el-input>
+                <el-input v-model="editStudentFormData.password" autocomplete="off"></el-input>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="editTeacherFormVisible = false">ยกเลิก</el-button>
-              <el-button type="primary" @click="submitEditTeacherForm">ตกลง</el-button>
+              <el-button @click="editStudentFormVisible = false">ยกเลิก</el-button>
+              <el-button type="primary" @click="submitEditStudentForm">ตกลง</el-button>
             </span>
           </el-dialog>
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">แก้ไข</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">ลบ</el-button>
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+            >แก้ไข</el-button
+          >
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >ลบ</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -88,10 +92,9 @@ import axios from "axios";
 export default {
   data() {
     return {
-      search: '',
-      addTeacherFormVisible: false,
-      editTeacherFormVisible: false,
-      addTeacherFormData: {
+      addStudentFormVisible: false,
+      editStudentFormVisible: false,
+      addStudentFormData: {
         user_id: '',
         firstname: '',
         lastname: '',
@@ -100,7 +103,7 @@ export default {
         username: '',
         password: '',
       },
-      editTeacherFormData: {
+      editStudentFormData: {
         user_id: '',
         firstname: '',
         lastname: '',
@@ -109,18 +112,18 @@ export default {
         username: '',
         password: '',
       },
-      teacherData: [],
+      studentData: [],
     };
   },
   mounted() {
-    this.getTeacherData();
+    this.getStudentData();
   },
   methods: {
-    submitAddTeacherForm() {
-      if (this.addTeacherFormData.user_id === '' || this.addTeacherFormData.firstname === '' || this.addTeacherFormData.lastname === '' || this.addTeacherFormData.username === '' || this.addTeacherFormData.password === '') {
+    submitAddStudentForm() {
+      if (this.addStudentFormData.user_id === '' || this.addStudentFormData.firstname === '' || this.addStudentFormData.lastname === '' || this.addStudentFormData.username === '' || this.addStudentFormData.password === '') {
         console.log("not valid")
       } else {
-        const { user_id, firstname, lastname, number, email, username, password } = this.addTeacherFormData
+        const { user_id, firstname, lastname, number, email, username, password } = this.addStudentFormData
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -130,7 +133,7 @@ export default {
             lastname: lastname,
             number: number,
             email: email,
-            role: 'teacher',
+            role: 'student',
             username: username,
             password: password,
           })
@@ -143,7 +146,7 @@ export default {
               console.error('There was an error!', error);
             }
             console.log('Success');
-            this.addTeacherFormVisible = false
+            this.addStudentFormVisible = false
             this.forcesRerender()
           })
           .catch(error => {
@@ -152,8 +155,8 @@ export default {
           });
       }
     },
-    submitEditTeacherForm() {
-      const { user_id, firstname, lastname, number, email, username, password } = this.editTeacherFormData
+    submitEditStudentForm() {
+      const { user_id, firstname, lastname, number, email, username, password } = this.editStudentFormData
       const requestOptions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -163,7 +166,7 @@ export default {
           lastname: lastname,
           number: number,
           email: email,
-          role: 'teacher',
+          role: 'student',
           username: username,
           password: password,
         })
@@ -176,7 +179,7 @@ export default {
             console.error('There was an error!', error);
           }
           console.log('Success');
-          this.editTeacherFormVisible = false
+          this.editStudentFormVisible = false
           this.forcesRerender()
         })
         .catch(error => {
@@ -184,14 +187,14 @@ export default {
           console.error('There was an error!', error);
         });
     },
-    getTeacherData() {
+    getStudentData() {
       axios
         .get("http://localhost:8000/user/")
         .then((response) => {
-          const teacher = response.data.filter(
-            (user) => user.role === 'teacher'
-          );
-          this.teacherData = teacher;
+          const student = response.data.filter(
+            (user) => user.role === 'student'
+            );
+          this.studentData = student;
         })
         .catch((error) => {
           console.log(error);
@@ -203,18 +206,18 @@ export default {
         .then((response) => {
           const res = response.data[0]
           const { user_id, firstname, lastname, number, email, role, username, password } = res
-          this.editTeacherFormData.user_id = user_id
-          this.editTeacherFormData.firstname = firstname
-          this.editTeacherFormData.lastname = lastname
-          this.editTeacherFormData.number = number
-          this.editTeacherFormData.email = email
-          this.editTeacherFormData.username = username
-          this.editTeacherFormData.password = ''
+          this.editStudentFormData.user_id = user_id
+          this.editStudentFormData.firstname = firstname
+          this.editStudentFormData.lastname = lastname
+          this.editStudentFormData.number = number
+          this.editStudentFormData.email = email
+          this.editStudentFormData.username = username
+          this.editStudentFormData.password = ''
         })
-      this.editTeacherFormVisible = true
+      this.editStudentFormVisible = true
     },
     async handleDelete(index, row) {
-      if (confirm('ยืนยันการลบอาจารย์หรือไม่?')) {
+      if (confirm('ยืนยันการลบนักศึกษาหรือไม่?')) {
         axios
           .delete("http://localhost:8000/user/?user_id=" + row.user_id)
           .then((response) => {
@@ -237,40 +240,31 @@ export default {
 .action-item:hover {
   cursor: pointer;
 }
-
 .el-alert {
   margin: 20px 0 0;
 }
-
 .el-alert:first-child {
   margin: 0;
 }
-
 .el-row {
   margin-bottom: 20px;
 }
-
 .el-col {
   border-radius: 4px;
 }
-
 .bg-purple-dark {
   background: #99a9bf;
 }
-
 .bg-purple {
   background: #d3dce6;
 }
-
 .bg-purple-light {
   background: #e5e9f2;
 }
-
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
 }
-
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
