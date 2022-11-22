@@ -19,13 +19,13 @@
 
     <el-dialog title="เพิ่มข้อสอบแบบกำหนดเอง" :visible.sync="addManualVisible" center>
       <el-form :model="addManualFormData">
-        <el-form-item label="คำถาม">
+        <el-form-item label="กรุณาระบุคำถาม">
           <el-input v-model="addManualFormData.question" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="คำตอบ">
+        <el-form-item label="กรุณาระบุคำตอบ">
           <el-input v-model="addManualFormData.answer" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="คะแนน">
+        <el-form-item label="กรุณาระบุคะแนน">
           <el-input v-model="addManualFormData.score" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -38,38 +38,71 @@
     <el-dialog title="เพิ่มข้อสอบอัตโนมัติ" :visible.sync="addAutoVisible" center>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
         <el-form-item label="เลือกประเภทของคำถาม" prop="type">
-          <el-checkbox-group v-model="ruleForm.type">
-            <el-checkbox label="INSERT" name="type"></el-checkbox>
-            <el-checkbox label="UPDATE" name="type"></el-checkbox>
-            <el-checkbox label="DELETE" name="type"></el-checkbox>
-            <el-checkbox label="SELECT" name="type"></el-checkbox>
-          </el-checkbox-group>
+          <el-select v-model="ruleForm.type" placeholder="เลือกประเภทของคำถาม">
+            <el-option v-for="type in questionType" :label="type.title" :value="type.title" name="type" />
+          </el-select>
         </el-form-item>
         <el-form-item label="ระดับของคำถาม" prop="level">
-          <el-checkbox-group v-model="ruleForm.level">
-            <el-checkbox label="ความจำ" name="level"></el-checkbox>
-            <el-input-number v-model="num1" controls-position="right" @change="handleChange1" :min="0" :max="10">
-            </el-input-number>
-            <br>
-            <el-checkbox label="ความเข้าใจ" name="level"></el-checkbox>
-            <el-input-number v-model="num2" controls-position="right" @change="handleChange2" :min="0" :max="10">
-            </el-input-number>
-            <br>
-            <el-checkbox label="ประยุกต์" name="level"></el-checkbox>
-            <el-input-number v-model="num3" controls-position="right" @change="handleChange3" :min="0" :max="10">
-            </el-input-number>
-            <br>
-            <el-checkbox label="วิเคราะห์" name="level"></el-checkbox>
-            <el-input-number v-model="num4" controls-position="right" @change="handleChange4" :min="0" :max="10">
-            </el-input-number>
-            <br>
-          </el-checkbox-group>
+          <el-row>
+            <el-col :span="4">
+              <div class="grid-content">
+                <div><br /></div>
+                <div>ความจำ</div>
+                <div>ความเข้าใจ</div>
+                <div>ประยุกต์</div>
+                <div>วิเคราะห์</div>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="grid-content">
+                <div>จำนวนข้อ</div>
+                <el-input-number v-model="ruleForm.level1.amount" controls-position="right" @change="handleChange1"
+                  :min="0" :max="100">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level2.amount" controls-position="right" @change="handleChange2"
+                  :min="0" :max="100">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level3.amount" controls-position="right" @change="handleChange3"
+                  :min="0" :max="100">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level4.amount" controls-position="right" @change="handleChange4"
+                  :min="0" :max="100">
+                </el-input-number>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="grid-content">
+                <div>คะแนน</div>
+                <el-input-number v-model="ruleForm.level1.score" controls-position="right" @change="handleChangeScore1"
+                  :min="0" :max="100" :disabled="ruleForm.level1.amount == 0">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level2.score" controls-position="right" @change="handleChangeScore2"
+                  :min="0" :max="100" :disabled="ruleForm.level2.amount == 0">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level3.score" controls-position="right" @change="handleChangeScore3"
+                  :min="0" :max="100" :disabled="ruleForm.level3.amount == 0">
+                </el-input-number>
+                <el-input-number v-model="ruleForm.level4.score" controls-position="right" @change="handleChangeScore4"
+                  :min="0" :max="100" :disabled="ruleForm.level4.amount == 0">
+                </el-input-number>
+              </div>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="จำนวนข้อ" prop="amount">
-          <el-input v-model.number="ruleForm.amount"></el-input>
+          <el-input
+            :value="ruleForm.level1.amount + ruleForm.level2.amount + ruleForm.level3.amount + ruleForm.level4.amount">
+          </el-input>
         </el-form-item>
         <el-form-item label="คะแนน" prop="score">
-          <el-input v-model.number="ruleForm.score"></el-input>
+          <el-input
+            :value="(ruleForm.level1.amount * ruleForm.level1.score) + (ruleForm.level2.amount * ruleForm.level2.score) + (ruleForm.level3.amount * ruleForm.level3.score) + (ruleForm.level4.amount * ruleForm.level4.score)">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="วิธีตรวจคำตอบ" prop="check">
+          <el-select v-model="ruleForm.check" placeholder="โปรดเลือกวิธีตรวจคำตอบ">
+            <el-option v-for="check in questionCheck" :label="check.title" :value="check.title" name="check" />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button @click="addAutoVisible = false">ยกเลิก</el-button>
@@ -153,33 +186,33 @@ export default {
   components: { DatePicker },
   data() {
     return {
-      num1: 0,
-      num2: 0,
-      num3: 0,
-      num4: 0,
+      questionType: [
+        { title: "INSERT" },
+        { title: "UPDATE" },
+        { title: "DELETE" },
+        { title: "SELECT" }
+      ],
+      questionCheck: [
+        { title: "ผลลัพธ์" },
+        { title: "ผลลัพธ์และคำสั่ง" }
+      ],
       time: [],
       ruleForm: {
-        score: '',
-        type: [],
-        level: [],
+        type: '',
+        level1: { amount: 0, score: 0 },
+        level2: { amount: 0, score: 0 },
+        level3: { amount: 0, score: 0 },
+        level4: { amount: 0, score: 0 },
+        check: '',
       },
       rules: {
-        score: [
-          { required: true, message: 'โปรดระบุคะแนน', trigger: 'blur' },
-          { type: 'number', message: 'โปรดระบุคะแนนเป็นตัวเลข' }
-        ],
-        amount: [
-          { required: true, message: 'โปรดระบุจำนวนข้อ', trigger: 'blur' },
-          { type: 'number', message: 'โปรดระบุจำนวนข้อเป็นตัวเลข' }
-        ],
         type: [
-          { type: 'array', required: true, message: 'โปรดเลือกประเภทของคำถามอย่างน้อย 1 ประเภท', trigger: 'change' }
+          { type: 'string', required: true, message: 'โปรดเลือกประเภทของคำถาม', trigger: 'change' }
         ],
-        level: [
-          { type: 'array', required: true, message: 'โปรดเลือกระดับของคำถามอย่างน้อย 1 ระดับ', trigger: 'change' }
-        ]
+        check: [
+          { type: 'string', required: true, message: 'โปรดเลือกวิธีตรวจคำตอบ', trigger: 'change' }
+        ],
       },
-
       uploadExamUrl: "",
       selectedSecId: "",
       fileList: [],
@@ -523,8 +556,7 @@ export default {
 
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!');
+        if (valid && this.ruleForm.level1.amount + this.ruleForm.level2.amount + this.ruleForm.level3.amount + this.ruleForm.level4.amount > 0 && (this.ruleForm.level1.amount * this.ruleForm.level1.score) + (this.ruleForm.level2.amount * this.ruleForm.level2.score) + (this.ruleForm.level3.amount * this.ruleForm.level3.score) + (this.ruleForm.level4.amount * this.ruleForm.level4.score)) {
           const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -533,6 +565,7 @@ export default {
               ruleForm: this.ruleForm,
             })
           };
+          console.log(this.ruleForm)
           fetch('http://localhost:8080/api/quest/', requestOptions)
             .then(async response => {
               console.log("fetch")
@@ -542,14 +575,14 @@ export default {
                 console.error('There was an error!', error);
               }
               console.log('Success');
-              this.forcesRerender()
+              // this.forcesRerender()
             })
             .catch(error => {
               this.errorMessage = error;
               console.error('There was an error!', error);
             });
         } else {
-          console.log('error submit!!');
+          alert('โปรดเลือกประเภทของคำถาม ระบุจำนวนข้อ คะแนน และ วิธีตรวจคำตอบ');
           return false;
         }
       });
